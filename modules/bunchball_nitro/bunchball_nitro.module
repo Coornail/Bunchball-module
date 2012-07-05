@@ -426,7 +426,7 @@ function _bunchball_nitro_filter_bunchball_tips($filter, $format, $long = FALSE)
       $rows[] = array("[bunchball-{$placeholder}]", $info);
     }
 
-    $output = t('Every instance of [bunchball-?] in the input text will be replaced with a configurable value. The "?" in the placeholder corresponds to available tags (e.g. [bunchball-owner_id]). The following is a list of available placeholders:');
+    $output = t('Every instance of [bunchball-?] in the input text will be replaced with a configurable value. The "?" in the placeholder corresponds to available tags (e.g. [bunchball-logged_in_user_id]). The following is a list of available placeholders:');
     $output .= theme('table', array(
       'header' => $header,
       'rows' => $rows,
@@ -435,7 +435,7 @@ function _bunchball_nitro_filter_bunchball_tips($filter, $format, $long = FALSE)
     return $output;
   }
   else {
-    return t('Every instance of [bunchball-?] in the input text will be replaced with a configurable value. The "?" in the placeholder corresponds to available tags (e.g. [bunchball-owner_id]).');
+    return t('Every instance of [bunchball-?] in the input text will be replaced with a configurable value. The "?" in the placeholder corresponds to available tags (e.g. [bunchball-logged_in_user_id]).');
   }
 }
 
@@ -458,8 +458,7 @@ function _bunchball_nitro_filter_bunchball_get_replacement($placeholder) {
 
   switch ($placeholder) {
     case 'logged_in_user_id':
-      global $user;
-      $replacement = bunchball_get_bunchball_uid($user->uid);
+      $replacement = bunchball_get_bunchball_uid($GLOBALS['user']->uid);
       break;
 
     case 'node_or_profile_user_id':
