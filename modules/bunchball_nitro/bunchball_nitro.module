@@ -126,7 +126,7 @@ function bunchball_nitro_admin_form_submit($form, &$form_state) {
 }
 
 /**
- * Implement hook_view($node, $view_mode)
+ * Implements hook_node_view.
  */
 function bunchball_nitro_node_view($node, $view_mode, $langcode) {
   if (user_is_anonymous()) {
@@ -147,14 +147,14 @@ function bunchball_nitro_node_view($node, $view_mode, $langcode) {
 
   drupal_add_js(array(
     'bunchball_nitro' => array(
-        'node_id' => $node->nid,
-        'node_uid' => $node->uid,
-        'node_title' => filter_xss($node->title, array()),
-        'node_cat' => $node->type,
-        'node_type' => $node->type,
-        'node_action' => $nitro_ct_enabled[$node->type],
-        )
-    ), 'setting');
+      'node_id' => $node->nid,
+      'node_uid' => $node->uid,
+      'node_title' => $node->title,
+      'node_cat' => $node->type,
+      'node_type' => $node->type,
+      'node_action' => $nitro_ct_enabled[$node->type],
+      )),
+    'setting');
 
   _bunchball_nitro_add_content_actions_js();
 }
@@ -184,7 +184,7 @@ function _bunchball_nitro_node_post_render($markup, $element) {
   $nitro_youtube_enabled = variable_get('bunchball_nitro_admin_youtube', array());
   drupal_add_js(array(
     'bunchball_nitro' => array(
-      'artist_name' => isset($element['#node']) ? filter_xss($element['#node']->title, array()) : "N/A",
+      'artist_name' => isset($element['#node']) ? $element['#node']->title : "N/A",
       'artist_cat' =>  isset($element['#node']) ? $element['#node']->type : "N/A",
       'artist_start' => isset($nitro_youtube_enabled['start']) ? $nitro_youtube_enabled['start'] : 'youtube_start',
       'artist_end' => isset($nitro_youtube_enabled['end']) ? $nitro_youtube_enabled['end'] : 'youtube_end',
@@ -244,8 +244,8 @@ function _bunchball_nitro_initialize() {
 
   // Instantiate the variables for the JS.
   $server_url = $in_debug_mode ?
-      'http://sandbox.bunchball.net/nitro/json' :
-      'http://' . $customer_subdomain . '.nitro.bunchball.net/nitro/json/';
+    'http://sandbox.bunchball.net/nitro/json' :
+    'http://' . $customer_subdomain . '.nitro.bunchball.net/nitro/json/';
   $user_id = bunchball_get_bunchball_uid($user->uid);
   $timestamp = time();
   $nitro = NitroAPI_Factory::getInstance();

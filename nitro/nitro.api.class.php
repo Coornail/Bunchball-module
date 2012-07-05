@@ -90,13 +90,16 @@ class NitroAPI_Factory {
     // singleton instance
   private static $instance;
 
-    /**
+  /**
    * Implement singleton pattern.
    *
-   * @return singleton instance of this class
+   * @return NitroAPI singleton instance of this class
    */
   public static function getInstance($type = 'XML') {
     if (!isset(self::$instance)) {
+      if ($t = variable_get('nitroapi_class_type')) {
+        $type = $t;
+      }
       $className = "NitroAPI_$type";
       $logger = variable_get('bunchball_nitro_logger', 'NitroSynchLogger');
       $client = variable_get('bunchball_nitro_client', 'NitroSynchClient');
