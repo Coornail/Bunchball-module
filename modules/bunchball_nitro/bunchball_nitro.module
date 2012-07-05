@@ -37,7 +37,7 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
       '#maxlength' => 128,
       '#states' => array(
         'invisible' => array(
-          ':input[name="checkbox_' . $machine . '"]' => array('checked' => FALSE),
+          ':input[name$="node_' . $machine . '_view_check]"]' => array('checked' => FALSE),
         ),
       ),
     );
