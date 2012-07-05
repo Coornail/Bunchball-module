@@ -59,12 +59,10 @@ class BunchballAdminTestCase extends DrupalWebTestCase {
     $edit = array();
     $content_types = array('page', 'article');
     foreach ($content_types as $ct) {
-      foreach (array('insert', 'update', 'comment') as $action) {
+      foreach (array('insert', 'update', 'comment', 'view') as $action) {
         $edit["bunchball_entities[settings][node_{$ct}][node_{$ct}_{$action}_check]"] = TRUE;
         $edit["bunchball_entities[settings][node_{$ct}][node_{$ct}_{$action}_action]"] = user_password();
       }
-      $edit["checkbox_{$ct}"] = TRUE;
-      $edit["name_{$ct}"] = user_password();
     }
 
     $edit['bunchball_fivestar[settings][fivestar][check]'] = TRUE;

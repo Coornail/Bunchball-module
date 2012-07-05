@@ -21,7 +21,6 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   $form['submit']['#weight'] = 2;
   $form['#submit'][] = 'bunchball_nitro_admin_form_submit';
 
-  // build form
   foreach ($node_types as $machine => $human) {
     $form['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_check"] = array(
       '#type' => 'checkbox',
@@ -29,7 +28,7 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
       '#description' => t('Notify the Bunchball service when a user views this content type.'),
       '#default_value' => isset($nitro_ct_enabled[$machine]) ? 1 : 0,
     );
-    $form['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_name"] = array(
+    $form['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_action"] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
@@ -464,8 +463,8 @@ function bunchball_nitro_admin_form_submit($form, &$form_state) {
   $node_types = node_type_get_names();
   foreach ($node_types as $machine => $human) {
     if($form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_check"] > 0
-        && strlen($form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_name"]) > 0) {
-      $action_names[$machine] = $form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_name"];
+        && strlen($form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_action"]) > 0) {
+      $action_names[$machine] = $form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_action"];
     }
   }
   variable_set('bunchball_nitro_admin', $action_names);
