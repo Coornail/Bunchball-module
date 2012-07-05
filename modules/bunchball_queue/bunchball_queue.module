@@ -24,7 +24,7 @@ function bunchball_queue_cron_queue_info() {
  */
 function bunchball_queue_request_queue_worker($job) {
   $valid_options = array_fill_keys(array('headers', 'method', 'data', 'max_redirects', 'timeout', 'context'), 0);
-  $options = array_intersect_key($job['options'], $valid_options);
+  $job['options'] = array_intersect_key($job['options'], $valid_options);
 
   $job['options'] += array(
     // Default timeout of 10 seconds - on the shorter side so processes don't hang,
