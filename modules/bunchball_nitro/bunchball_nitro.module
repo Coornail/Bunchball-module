@@ -12,8 +12,8 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
 
   $form['bunchball_nitro'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Nitro Javascript'),
-    '#collapsible' => FALSE,
+    '#title' => t('Media'),
+    '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#weight' => 1,
   );
@@ -44,7 +44,8 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   }
 
   // Youtube element.
-  $nitro_youtube_enabled = variable_get('bunchball_nitro_admin_youtube', array());
+  $nitro_youtube_start = variable_get('bunchball_nitro_admin_youtube_start', NULL);
+  $nitro_youtube_end = variable_get('bunchball_nitro_admin_youtube_end', NULL);
 
   $form['bunchball_nitro']['element_youtube'] = array(
     '#type' => 'fieldset',
@@ -52,33 +53,39 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
-  $form['bunchball_nitro']['element_youtube']['checkbox_youtube'] = array(
+  $form['bunchball_nitro']['element_youtube']['youtube_start_checkbox'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enabled'),
-    '#default_value' => isset($nitro_youtube_enabled['start']) &&
-      isset($nitro_youtube_enabled['end']) ? 1 : 0,
+    '#title' => t('Start YouTube video'),
+    '#description' => t('Notify the Bunchball service when a user starts playing a video.'),
+    '#default_value' => !empty($nitro_youtube_start) ? 1 : 0,
   );
-  $form['bunchball_nitro']['element_youtube']['youtube_start'] = array(
+  $form['bunchball_nitro']['element_youtube']['youtube_start_action'] = array(
     '#type' => 'textfield',
     '#title' => t('Start action name'),
-    '#default_value' => isset($nitro_youtube_enabled['start']) ? $nitro_youtube_enabled['start'] : '',
+    '#default_value' => !empty($nitro_youtube_start) ? $nitro_youtube_start : '',
     '#size' => 60,
     '#maxlength' => 128,
     '#states' => array(
       'invisible' => array(
-        ':input[name="checkbox_youtube"]' => array('checked' => FALSE),
+        ':input[name="youtube_start_checkbox"]' => array('checked' => FALSE),
       ),
     ),
   );
-  $form['bunchball_nitro']['element_youtube']['youtube_end'] = array(
+  $form['bunchball_nitro']['element_youtube']['youtube_end_checkbox'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('End YouTube video'),
+    '#description' => t('Notify the Bunchball service when a video playing has ended for user.'),
+    '#default_value' => !empty($nitro_youtube_end) ? 1 : 0,
+  );
+  $form['bunchball_nitro']['element_youtube']['youtube_end_action'] = array(
     '#type' => 'textfield',
     '#title' => t('End action name'),
-    '#default_value' => isset($nitro_youtube_enabled['end']) ? $nitro_youtube_enabled['end'] : '',
+    '#default_value' => !empty($nitro_youtube_end) ? $nitro_youtube_end : '',
     '#size' => 60,
     '#maxlength' => 128,
     '#states' => array(
       'invisible' => array(
-        ':input[name="checkbox_youtube"]' => array('checked' => FALSE),
+        ':input[name="youtube_end_checkbox"]' => array('checked' => FALSE),
       ),
     ),
   );
@@ -140,13 +147,14 @@ function _bunchball_nitro_node_post_render($markup, $element) {
 
   _bunchball_nitro_add_content_actions_js();
 
-  $nitro_youtube_enabled = variable_get('bunchball_nitro_admin_youtube', array());
+  $nitro_youtube_start = variable_get('bunchball_nitro_admin_youtube_start', NULL);
+  $nitro_youtube_end = variable_get('bunchball_nitro_admin_youtube_end', NULL);
   drupal_add_js(array(
     'bunchball_nitro' => array(
       'artist_name' => isset($element['#node']) ? $element['#node']->title : "N/A",
       'artist_cat' =>  isset($element['#node']) ? $element['#node']->type : "N/A",
-      'artist_start' => isset($nitro_youtube_enabled['start']) ? $nitro_youtube_enabled['start'] : 'youtube_start',
-      'artist_end' => isset($nitro_youtube_enabled['end']) ? $nitro_youtube_enabled['end'] : 'youtube_end',
+      'artist_start' => !empty($nitro_youtube_start) ? $nitro_youtube_start : 'youtube_start',
+      'artist_end' => !empty($nitro_youtube_end) ? $nitro_youtube_end : 'youtube_end',
     )
   ), 'setting');
 
@@ -466,12 +474,16 @@ function bunchball_nitro_admin_form_submit($form, &$form_state) {
   }
   variable_set('bunchball_nitro_admin', $action_names);
 
-  variable_del('bunchball_nitro_admin_youtube');
-  if ($form_state['values']['checkbox_youtube'] > 0 && strlen($form_state['values']['youtube_start']) > 0 && strlen($form_state['values']['youtube_end']) > 0) {
-    $youtube = array();
-    $youtube['start'] = $form_state['values']['youtube_start'];
-    $youtube['end'] = $form_state['values']['youtube_end'];
-    variable_set('bunchball_nitro_admin_youtube', $youtube);
+  variable_del('bunchball_nitro_admin_youtube_start');
+  if ($form_state['values']['youtube_start_checkbox'] > 0 && strlen($form_state['values']['youtube_start_action']) > 0) {
+    $youtube_start = $form_state['values']['youtube_start_action'];
+    variable_set('bunchball_nitro_admin_youtube_start', $youtube_start);
+  }
+
+  variable_del('bunchball_nitro_admin_youtube_end');
+  if ($form_state['values']['youtube_end_checkbox'] > 0 && strlen($form_state['values']['youtube_end_action']) > 0) {
+    $youtube_end = $form_state['values']['youtube_end_action'];
+    variable_set('bunchball_nitro_admin_youtube_end', $youtube_end);
   }
 }
 
