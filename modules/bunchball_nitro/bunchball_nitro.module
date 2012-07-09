@@ -62,6 +62,7 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   $form['bunchball_nitro']['element_youtube']['youtube_start_action'] = array(
     '#type' => 'textfield',
     '#title' => t('Start action name'),
+    '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
     '#default_value' => !empty($nitro_youtube_start) ? $nitro_youtube_start : '',
     '#size' => 60,
     '#maxlength' => 128,
@@ -80,6 +81,7 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   $form['bunchball_nitro']['element_youtube']['youtube_end_action'] = array(
     '#type' => 'textfield',
     '#title' => t('End action name'),
+    '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
     '#default_value' => !empty($nitro_youtube_end) ? $nitro_youtube_end : '',
     '#size' => 60,
     '#maxlength' => 128,
