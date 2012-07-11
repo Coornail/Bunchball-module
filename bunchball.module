@@ -137,7 +137,7 @@ function bunchball_get_bunchball_uid($uid) {
 
     case 'janrain_uuid':
       if (janrain_capture_mapping_exists($uid)) {
-        $unique_id = db_query("SELECT authname FROM {authmap} WHERE module = 'janrain_capture' AND uid = :uid", array(':uid' => $uid))->fetchField();;
+        $unique_id = db_query("SELECT authname FROM {authmap} WHERE module = 'janrain_capture' AND uid = :uid", array(':uid' => $uid))->fetchField();
       }
       else {
         // @todo Handle if user has no Janrain uuid/guid.
