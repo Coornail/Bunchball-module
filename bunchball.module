@@ -98,6 +98,11 @@ function bunchball_form_bunchball_admin_form_alter(&$form, $form_state, $form_id
  *
  * @see bunchball_admin_form()
  *
+ * @todo Janrain uid support:
+ *   - Make configurable if uuid/guid should be obtained.
+ *   - Obtain Janrain uuid/guid.
+ *   - Handle if user has no Janrain uuid/guid.
+ *
  * @param int $uid
  *   Drupal user id.
  *
@@ -131,7 +136,12 @@ function bunchball_get_bunchball_uid($uid) {
       break;
 
     case 'janrain_uuid':
-      // @todo
+      if (janrain_capture_mapping_exists($uid)) {
+        $unique_id = db_query("SELECT authname FROM {authmap} WHERE module = 'janrain_capture' AND uid = :uid", array(':uid' => $uid))->fetchField();;
+      }
+      else {
+        // @todo Handle if user has no Janrain uuid/guid.
+      }
       break;
   }
 
