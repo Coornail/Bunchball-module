@@ -408,7 +408,7 @@ class NitroAPI_XML implements NitroAPI {
     if ($result != 'ok') {
       throw new NitroAPI_LogActionException(t('Nitro API log action failed'));
     }
-    $return = strval(reset($xml->xpath('Nitro/users/User/SiteLevel/@name')));
+    $return = strval(reset($xml->xpath('/Nitro/users/User/SiteLevel/@name')));
     bunchball_debug(__METHOD__ . ' Result: %result; return: %return', array('%result' => $result, '%return' => $return));
 
     return $return;
