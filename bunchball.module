@@ -173,3 +173,17 @@ function bunchball_debug($message, $variables) {
     drupal_set_message(t($message, $variables));
   }
 }
+
+/**
+ * Determine whether bunchball has the minimum configuration requirements to allow initialization.
+ *
+ * @return
+ *   TRUE if Bunchball has been configured with all of the minimum data: api key,
+ *   secret and url for the current environment.
+ */
+function _bunchball_is_configured() {
+  $environment = variable_get('bunchball_environment');
+  return variable_get('bunchball_apikey')
+    && variable_get('bunchball_apikey')
+    && variable_get("bunchball_{$environment}_url");
+}

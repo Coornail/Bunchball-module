@@ -255,9 +255,12 @@ function _bunchball_nitro_initialize() {
  * Implements hook_init().
  */
 function bunchball_nitro_init() {
-  _bunchball_nitro_initialize();
-  _bunchball_nitro_add_notification_js();
-  _bunchball_nitro_add_nml_js();
+  // Only initialize if we have all minimum configuration options set.
+  if (_bunchball_is_configured()) {
+    _bunchball_nitro_initialize();
+    _bunchball_nitro_add_notification_js();
+    _bunchball_nitro_add_nml_js();
+  }
 }
 
 function _bunchball_nitro_add_content_actions_js() {
