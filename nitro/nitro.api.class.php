@@ -317,7 +317,8 @@ class NitroAPI_XML implements NitroAPI {
    *    Drupal user.
    */
   public function drupalLogin($account) {
-    $this->login($account->uid, $account->name, md5($account->mail));
+    // @todo - it should be made possible soon to map arbitrary fields to firstname and lastname
+    $this->login($account->uid, $account->name, '');
     if (!$this->is_session_from_cache) {
       $roles = $this->formatRoles($account->roles);
       $this->setPreferences($roles, TRUE);
