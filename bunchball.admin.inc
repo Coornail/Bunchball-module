@@ -86,6 +86,22 @@ function bunchball_admin_form($form, &$form_state) {
     '#default_value' => variable_get('bunchball_unique_id', 'email'),
   );
 
+  if (module_exists('janrain_capture')) {
+    unset($unique_id_options['janrain_uuid']);
+    $form['bunchball_unique_id_fieldset']['bunchball_janrain_fallback'] = array(
+      '#title' => t('Janrain UUID fallback'),
+      '#type' => 'select',
+      '#options' => $unique_id_options,
+      '#default_value' => variable_get('bunchball_janrain_fallback', 'email'),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="bunchball_unique_id"]' => array('value' => 'janrain_uuid'),
+        ),
+      ),
+      '#description' => t('This value will be used when the Janrain UUID is not availible for the user.'),
+    );
+  }
+
   $form['bunchball_unique_id_fieldset']['bunchball_unique_id_include_site_hash'] = array(
     '#title' => t('Include site hash'),
     '#type' => 'checkbox',

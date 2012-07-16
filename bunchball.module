@@ -106,11 +106,17 @@ function bunchball_form_bunchball_admin_form_alter(&$form, $form_state, $form_id
  * @param int $uid
  *   Drupal user id.
  *
+ * @param string $unique_id_type
+ *   (Optional) Unique id type.
+ *   If ommited the settings will be used from bunchball_admin_form().
+ *
  * @return string
  *   Bunchball uuid.
  */
-function bunchball_get_bunchball_uid($uid) {
-  $unique_id_type = variable_get('bunchball_unique_id', 'email');
+function bunchball_get_bunchball_uid($uid, $unique_id_type = NULL) {
+  if ($unique_id_type === NULL) {
+    $unique_id_type = variable_get('bunchball_unique_id', 'email');
+  }
   $include_site_hash = variable_get('bunchball_unique_id_include_site_hash', FALSE);
 
   // Make sure Janrain capture is enabled if we want to use it for generating
@@ -140,7 +146,9 @@ function bunchball_get_bunchball_uid($uid) {
         $unique_id = db_query("SELECT authname FROM {authmap} WHERE module = 'janrain_capture' AND uid = :uid", array(':uid' => $uid))->fetchField();
       }
       else {
-        // @todo Handle if user has no Janrain uuid/guid.
+        // If Janrain UUID cannot be found for the user, use the fallback.
+        $unique_id_fallback = variable_get('bunchball_janrain_fallback', 'email');
+        return bunchball_get_bunchball_uid($uid, $unique_id_fallback);
       }
       break;
   }
