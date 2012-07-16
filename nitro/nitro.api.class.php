@@ -277,14 +277,17 @@ class NitroAPI_XML implements NitroAPI {
       $signature = $this->getSignature();
 
       // Construct a URL for REST API call user_login to extract Session Key
-      $request = $this->baseURL .
-        "?method=user.login" .
-        "&apiKey={$this->apiKey}" .
-        "&userId={$this->userName}" .
-        "&ts=" . time() .
-        "&sig=$signature" .
-        "&firstName=$firstName" .
-        "&lastName=$lastName";
+      $request = url($this->baseURL, array(
+        'query' => array(
+          'method' => 'user.login',
+          'apiKey' => $this->apiKey,
+          'userId' => $this->userName,
+          'ts' => time(),
+          'sig' => $signature,
+          'firstName' => $firstName,
+          'lastName' => $lastName,
+        ),
+      ));
 
       $xml = $this->client->request($request);
 
@@ -338,11 +341,16 @@ class NitroAPI_XML implements NitroAPI {
    */
   public function logAction($actionTag, $value = '') {
     // Construct a URL for user logAction
-    $request = "{$this->baseURL}?method=user.logAction" .
-            "&sessionKey={$this->sessionKey}" .
-            "&userId={$this->userName}" .
-            "&tags=$actionTag" .
-            "&value=$value";
+    $request = url($this->baseURL, array(
+      'query' => array(
+        'method' => 'user.logAction',
+        'sessionKey' => $this->sessionKey,
+        'userId' => $this->userName,
+        'tags' => $actionTag,
+        'value' => $value,
+      ),
+    ));
+
     watchdog('bunchball', 'Log Action: %actionTag; value: %value', array('%actionTag' => $actionTag, '%value' => $value), WATCHDOG_INFO);
     //Converting XML response attribute and values to array attributes and values
     $xml = $this->logger->log($request);
@@ -370,18 +378,26 @@ class NitroAPI_XML implements NitroAPI {
       $names_list = str_replace(' ', '_', implode('|', array_keys($names)));
       $values_list = str_replace(' ', '_', implode('|', array_values($names)));
       // Construct a URL for user setPreferences
-      $request = "{$this->baseURL}?method=user.setPreferences" .
-              "&sessionKey={$this->sessionKey}" .
-              "&userId={$this->userName}" .
-              "&names=$names_list" .
-              "&values=$values_list";
+      $request = url($this->baseURL, array(
+        'query' => array(
+          'method' => 'user.setPreferences',
+          'sessionKey' => $this->sessionKey,
+          'userId' => $this->userName,
+          'names' => $names_list,
+          'values' => $values_list,
+        ),
+      ));
     }
     else {
       $names_list = str_replace(' ', '_', implode('|', array_values($names)));
-      $request = "{$this->baseURL}?method=user.setPreferences" .
-              "&sessionKey={$this->sessionKey}" .
-              "&userId={$this->userName}" .
-              "&names=$names_list";
+      $request = url($this->baseURL, array(
+        'query' => array(
+          'method' => 'user.setPreferences',
+          'sessionKey' => $this->sessionKey,
+          'userId' => $this->userName,
+          'names' => $names_list,
+        ),
+      ));
     }
     $xml = $this->client->request($request);
     $result = strval(reset($xml->xpath('/Nitro/@res')));
@@ -399,8 +415,13 @@ class NitroAPI_XML implements NitroAPI {
    */
   public function getLevel() {
     // Construct a URL for user logAction
-    $request = "{$this->baseURL}?method=user.getLevel" .
-            "&sessionKey={$this->sessionKey}";
+    $request = url($this->baseURL, array(
+      'query' => array(
+        'method' => 'user.getLevel',
+        'sessionKey' => $this->sessionKey,
+      ),
+    ));
+
     watchdog('bunchball', 'Get level - user: %username.', array('%username' => $this->userName), WATCHDOG_INFO);
     //Converting XML response attribute and values to array attributes and values
     $xml = $this->client->request($request);
@@ -422,10 +443,15 @@ class NitroAPI_XML implements NitroAPI {
    */
   public function addUserToGroup($group) {
     // Construct a URL for user logAction
-    $request = "{$this->baseURL}?method=site.addUsersToGroup" .
-            "&sessionKey={$this->sessionKey}" .
-            "&groupName=$group" .
-            "&userIds={$this->userName}";
+    $request = url($this->baseURL, array(
+      'query' => array(
+        'method' => 'site.addUsersToGroup',
+        'sessionKey' => $this->sessionKey,
+        'groupName' => $group,
+        'userIds' => $this->userName,
+      ),
+    ));
+
     watchdog('bunchball', 'Add user to group - user: %username group: %group.',
             array('%username' => $this->userName, '%group' => $group), WATCHDOG_INFO);
 
@@ -444,12 +470,16 @@ class NitroAPI_XML implements NitroAPI {
    */
   public function getUserPointsBalance() {
     // Construct a URL to get point balance from user
-    $request = $this->baseURL .
-            "?method=user.getPointsBalance" .
-            "&sessionKey=" . $this->sessionKey .
-            "&start=0" . "&pointCategory=" .
-            $this->POINT_CATEGORY_ALL . "&criteria=" .
-            $this->CRITERIA_CREDITS . '&userId=' . $this->userName;
+    $request = url($this->baseURL, array(
+      'query' => array(
+        'method' => 'user.getPointsBalance',
+        'sessionKey' => $this->sessionKey,
+        'start' => 0,
+        'pointCategory' => $this->POINT_CATEGORY_ALL,
+        'criteria' => $this->CRITERIA_CREDITS,
+        'userId' => $this->userName,
+      ),
+    ));
 
     $xml = $this->client->request($request);
     $return = reset($xml->xpath('/Nitro/Balance'));
@@ -468,13 +498,16 @@ class NitroAPI_XML implements NitroAPI {
    */
   public function getSiteActionLeaders($actionTag) {
     // Construct a URL to get action leaders
-    $request = $this->baseURL .
-            "?method=site.getActionLeaders" .
-            "&sessionKey=" . $this->sessionKey .
-            "&tags=" . $actionTag .
-            "&tagsOperator=" . $this->TAGS_OPERATOR_OR .
-            "&criteria=" . $this->CRITERIA_MAX .
-            "&returnCount=" . $this->value;
+    $request = url($this->baseURL, array(
+      'query' => array(
+        'method' => 'site.getActionLeaders',
+        'sessionKey' => $this->sessionKey,
+        'tags' => $actionTag,
+        'tagsOperator' => $this->TAGS_OPERATOR_OR,
+        'criteria' => $this->CRITERIA_MAX,
+        'returnCount' => $this->value,
+      ),
+    ));
 
     $xml = $this->client->request($request);
     $return = reset($xml->xpath('/Nitro/actions/Action'))->attributes();
