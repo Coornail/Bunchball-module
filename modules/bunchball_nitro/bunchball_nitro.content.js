@@ -2,7 +2,7 @@
   Drupal.behaviors.bunchballNitroContent = {
     attach: function (context, settings) {
       if (typeof Drupal.bunchball.nitro !== "undefined") {
-        Drupal.bunchball.nitro.getUserId(gotCurrentUserId);
+        setUserId();
       }
     }
   };
@@ -13,12 +13,18 @@ var _userCommandsArray = [];
 var _thePlayer = '';
 var _playerPlayed = 0;
 
+function setUserId() {
+  var userId = Drupal.bunchball.nitro.connectionParams.userId;
+  Drupal.bunchball.nitro.setUserId(userId);
+  Drupal.bunchball.nitro.getUserId(gotCurrentUserId);
+}
+
 // Callback function for acquiring the User ID of the current user.
 function gotCurrentUserId(inUserId) {
   _currentUserId = inUserId;
 
   // User viewed content.
-  if (typeof Drupal.settings.bunchball_nitro.node_id !== 'undefined') {
+  if (typeof Drupal.settings.bunchballNitroNode.nodeID !== 'undefined') {
     // We are in a node.
     userViewedContent();
   }
@@ -26,10 +32,8 @@ function gotCurrentUserId(inUserId) {
 
 // ViewedContent is called because the user is currently viewing content.
 function userViewedContent() {
-  var title    = Drupal.settings.bunchball_nitro.node_title;
-  var cat      = Drupal.settings.bunchball_nitro.node_cat;
-  var bb_tag   = Drupal.settings.bunchball_nitro.node_action;
-  var sentTags = encodeURIComponent(bb_tag + ', Title: ' + title + ', Category: ' + cat);
+  var nodeData = Drupal.settings.bunchballNitroNode;
+  var sentTags = nodeData.nodeAction + ', Title: ' + nodeData.nodeTitle + ', Category: ' + nodeData.nodeCategory;
 
   // add requests for all players into the array to walk through.
   var inObj = {};
@@ -38,24 +42,20 @@ function userViewedContent() {
   inObj.ses = '';
   _userCommandsArray.push(inObj);
 
-  var uid = Drupal.settings.bunchball_nitro.node_uid;
-
   // TODO: here is where you'd check to make sure the users isn't the same as
   // the creator.
-
-  inObj = {};
-  inObj.uid = uid;
-  inObj.tags = sentTags;
-  inObj.ses = '';
-  _userCommandsArray.push(inObj);
 
   nitroIterateQueue();
 }
 
 function submitNitroAPICall(tags) {
-  var queryString = 'method=user.logAction&sessionKey=';
-  queryString += _userCommandsArray[0].ses + '&tags=';
-  queryString += tags;
+  var params = new Array();
+
+  params[0] = 'method=' + encodeURIComponent('user.logAction');
+  params[1] = 'sessionKey=' + encodeURIComponent(_userCommandsArray[0].ses);
+  params[2] = 'tags=' + encodeURIComponent(tags);
+
+  var queryString = params.join('&');
 
   nitroCallback("data", "token");
   Drupal.bunchball.nitro.callAPI(queryString, "nitroCallback");
@@ -71,13 +71,16 @@ function nitroCallback(data, token) {
 }
 
 function nitroLogin(userId) {
+  var connectionParams = Drupal.bunchball.nitro.connectionParams;
+  var params = new Array();
 
-  // build the login request
-  var loginQuery = "method=user.login&";
-  loginQuery += "apiKey=" + Drupal.bunchball.nitro.connectionParams.apiKey + "&";
-  loginQuery += "userId=" + userId + "&";
-  loginQuery += "ts=" + Drupal.bunchball.nitro.connectionParams.timeStamp + "&";
-  loginQuery += "sig=" + Drupal.bunchball.nitro.connectionParams.signature;
+  params[0] = 'method=' + encodeURIComponent('user.login');
+  params[1] = 'apiKey=' + encodeURIComponent(connectionParams.apiKey);
+  params[2] = 'userId=' + encodeURIComponent(userId);
+  params[3] = 'ts=' + encodeURIComponent(connectionParams.timeStamp);
+  params[4] = 'sig=' + encodeURIComponent(connectionParams.signature);
+
+  var loginQuery = params.join('&');
 
   Drupal.bunchball.nitro.callAPI(loginQuery, "nitroLoginCallback");
 }
