@@ -35,23 +35,24 @@ class BunchballGroups implements BunchballPluginInterface, BunchballUserInteract
     }
 
     $form['bunchball_groups'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Bunchball groups'),
-        '#collapsible' => TRUE,
-        '#theme' => 'bunchball_groups_admin',
-        '#prefix' => '<div id="bunchball-groups-table">',
-        '#suffix' => '</div>',
-        '#tree' => TRUE,
+      '#type' => 'fieldset',
+      '#title' => t('Bunchball groups'),
+      '#collapsible' => TRUE,
+      '#theme' => 'bunchball_groups_admin',
+      '#prefix' => '<div id="bunchball-groups-table">',
+      '#suffix' => '</div>',
+      '#tree' => TRUE,
+      '#description' => t('Map users to Bunchball groups according to profile field values.'),
     );
     $form['bunchball_groups']['settings'] = $this->buildFields($num_rows);
     $form['bunchball_groups']['add-button'] = array(
-        '#type' => 'submit',
-        '#value' => t('Add another row'),
-        '#submit' => array('bunchball_groups_ajax_add_one'),
-        '#ajax' => array(
-            'callback' => 'bunchball_groups_ajax_callback',
-            'wrapper' => 'bunchball-groups-table',
-        ),
+      '#type' => 'submit',
+      '#value' => t('Add another row'),
+      '#submit' => array('bunchball_groups_ajax_add_one'),
+      '#ajax' => array(
+        'callback' => 'bunchball_groups_ajax_callback',
+        'wrapper' => 'bunchball-groups-table',
+      ),
     );
 
     return $form;

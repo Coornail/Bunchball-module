@@ -37,9 +37,9 @@ function bunchball_admin_form($form, &$form_state) {
     '#type' => 'select',
     '#description' => t('Point to Sandbox for testing and Production for your live environment.'),
     '#options' => array(
-       0 => ' ',
-       'production' => t('Production'),
-       'sandbox' => t('Sandbox')
+      0 => t('Choose environment'),
+      'production' => t('Production'),
+      'sandbox' => t('Sandbox'),
     ),
     '#required' => TRUE,
     '#default_value' => isset($form_state['values']['bunchball_environment']) ? $form_state['values']['bunchball_environment'] : variable_get('bunchball_environment', ''),
@@ -128,26 +128,20 @@ function bunchball_admin_form($form, &$form_state) {
   $form['bunchball_dev_options_fieldset']['bunchball_client_timeout'] = array(
     '#type' => 'select',
     '#options' => $timeout_options,
-    '#title' => t('API Client timeout'),
+    '#title' => t('Client request timeout'),
     '#default_value' => isset($form_state['values']['bunchball_client_timeout']) ? $form_state['values']['bunchball_client_timeout'] : variable_get('bunchball_client_timeout', 10.0),
-    '#description' => t('Default timeout of the API client.  This should be set
-      sufficiently high to accomodate most normal requests, but the lowest possible
-      value above that. Setting this value too high will potentially cause page
-      requests to hang for the length of this value in the event of the bunchball
-      server being unresponsive.'),
+    '#description' => t('The default timeout for the API client requests.
+      Setting this value too high can cause page requests to hang for the time
+      specified in this value if the bunchball server is unresponsive.'),
   );
 
   $form['bunchball_dev_options_fieldset']['bunchball_logger_timeout'] = array(
     '#type' => 'select',
     '#options' => $timeout_options,
-    '#title' => t('Action logging API client timeout'),
+    '#title' => t('Client logging timeout'),
     '#default_value' => isset($form_state['values']['bunchball_logger_timeout']) ? $form_state['values']['bunchball_logger_timeout'] : variable_get('bunchball_logger_timeout', 10.0),
-    '#description' => t('Default timeout of the action logging client.  Essentially
-      the same as the API client timeout, but can be configured to a separate value.
-      Action logging responses typically are not essential to the further functioning
-      of the site, so it is possible to set this timeout somewhat lower than the
-      client timeout (though should still be high enough to capture the large majority
-      of API requests).'),
+    '#description' => t('The default time for the API client to log an action.
+      This value can be set lower than the client timeout.'),
   );
 
   $form['bunchball_dev_options_fieldset']['bunchball_debug_mode'] = array(
@@ -159,7 +153,9 @@ function bunchball_admin_form($form, &$form_state) {
     ),
     '#title' => t('Debug mode'),
     '#default_value' => isset($form_state['values']['bunchball_debug_mode']) ? $form_state['values']['bunchball_debug_mode'] : variable_get('bunchball_debug_mode', 0),
-    '#description' => t('Set debug mode to show messages about what has been sent to bunchball and responses. "Display" will only display messages to the same user that triggered them, but could still show undesired information to end users, so should be used with caution.')
+    '#description' => t('Enabling debug mode will log messages sent to and from
+      the Bunchball service. Select "Display and log" to show logging results to
+      users.'),
   );
 
   return system_settings_form($form);
