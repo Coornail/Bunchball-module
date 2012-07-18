@@ -110,9 +110,11 @@ function bunchball_admin_form($form, &$form_state) {
     );
   }
 
-  $form['bunchball_unique_id_fieldset']['warning'] = array(
-    '#markup' => '<span style="color:red">' . t('Since gamification data is currently being tracked, any changes will reset gamification data for existing users because the Bunchball service identifies them as new users.') . '</span>',
-  );
+  if (_bunchball_is_configured()) {
+    $form['bunchball_unique_id_fieldset']['warning'] = array(
+      '#markup' => '<span style="color:red">' . t('Since gamification data is currently being tracked, any changes will reset gamification data for existing users because the Bunchball service identifies them as new users.') . '</span>',
+    );
+  }
 
   $form['bunchball_dev_options_fieldset'] = array(
     '#type' => 'fieldset',
