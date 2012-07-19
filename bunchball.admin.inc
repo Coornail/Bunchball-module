@@ -12,8 +12,8 @@ function bunchball_admin_form($form, &$form_state) {
   ctools_include('dependent');
 
   $links = array(
-      '!content_actions' => l('content actions', 'admin/config/people/bunchball/entities'),
-      '!user_actions' => l('user actions', 'admin/config/people/bunchball/user-interaction'),
+    '!content_actions' => l(t('content actions'), 'admin/config/people/bunchball/entities'),
+    '!user_actions' => l(t('user actions'), 'admin/config/people/bunchball/user-interaction'),
   );
   $form['description'] = array(
     '#markup' => t('Connection to Bunchball Nitro requires a subscription. Once subscribed, use the values on the Nitro Admin console to complete the fields below to connect the service.  Then configure the !content_actions and !user_actions to track.', $links),
