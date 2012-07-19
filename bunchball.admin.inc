@@ -160,7 +160,26 @@ function bunchball_admin_form($form, &$form_state) {
       users.'),
   );
 
+  $form['#submit'][] = 'bunchball_admin_form_submit';
+
   return system_settings_form($form);
+}
+
+/**
+ * Form submit handler for the bunchball admin form.
+ *
+ * Drops session cache in case the bunchball credentials are changed.
+ */
+function bunchball_admin_form_submit($form, &$form_state) {
+  $api_key_changed = $form_state['values']['bunchball_apikey'] != variable_get('bunchball_apikey');
+  $api_secret_changed = $form_state['values']['bunchball_apisecret'] != variable_get('bunchball_apisecret');
+  $environment_changed = $form_state['values']['bunchball_environment'] != variable_get('bunchball_environment');
+  $production_url_changed = $form_state['values']['bunchball_production_url'] != variable_get('bunchball_production_url');
+  $sandbox_url_changed = $form_state['values']['bunchball_sandbox_url'] != variable_get('bunchball_sandbox_url');
+
+  if ($api_key_changed || $api_secret_changed || $environment_changed || $production_url_changed || $sandbox_url_changed) {
+    db_query('DELETE FROM {cache_bunchball_session}');
+  }
 }
 
 /**
