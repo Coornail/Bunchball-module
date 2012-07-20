@@ -261,7 +261,7 @@ function bunchball_admin_confirm_form($form, &$form_state) {
 
   // If the IDs changed, show a confirmation form.
   $unique_id_changed = $form_state['input']['bunchball_unique_id'] != variable_get('bunchball_unique_id', 'email');
-  $janirain_unique_id_changed = $form_state['input']['bunchball_janrain_fallback '] != variable_get('bunchball_janrain_fallback ');
+  $janirain_unique_id_changed = $form_state['input']['bunchball_janrain_fallback'] != variable_get('bunchball_janrain_fallback');
   if ($unique_id_changed || $janirain_unique_id_changed) {
     $f = array();
     $f['#submit'][] = 'system_settings_form_submit';
@@ -283,7 +283,7 @@ function bunchball_admin_confirm_form($form, &$form_state) {
   }
 
   // IDs didn't change, save the values and redirect back to the form.
-  $fake_form_state = array('values' => $form_state['input']);
+  $fake_form_state = array('values' => $form_state['input'], 'buttons' => array());
   system_settings_form_submit($form, $fake_form_state);
 
   drupal_goto('admin/config/people/bunchball');
