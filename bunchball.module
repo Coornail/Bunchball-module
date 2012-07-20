@@ -150,12 +150,16 @@ function bunchball_get_bunchball_uid($uid, $unique_id_type = NULL) {
       break;
 
     case 'janrain_uuid':
-      if (function_exists('janrain_capture_mapping_exists') && janrain_capture_mapping_exists($uid)) {
-        $unique_id = db_query("SELECT authname FROM {authmap} WHERE module = 'janrain_capture' AND uid = :uid", array(':uid' => $uid))->fetchField();
+      $account = user_load($uid);
+      if (empty($account->data['bunchball_janarain_use_fallback']) && !empty($account->field_janrain_capture_uuid[LANGUAGE_NONE][0]['value'])) {
+        $unique_id = $account->field_janrain_capture_uuid[LANGUAGE_NONE][0]['value'];
       }
       else {
         // If Janrain UUID cannot be found for the user, use the fallback.
         $unique_id_fallback = variable_get('bunchball_janrain_fallback', 'email');
+        if (empty($account->data['bunchball_janarain_use_fallback']) && !empty($account->uid)) {
+          user_save($account, array('data' => array('bunchball_janarain_use_fallback' => TRUE)));
+        }
         return bunchball_get_bunchball_uid($uid, $unique_id_fallback);
       }
       break;
