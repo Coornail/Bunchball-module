@@ -34,6 +34,14 @@ function bunchball_menu() {
     'weight' => -10,
   );
 
+  $items['admin/config/people/bunchball/confirm'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bunchball_admin_confirm_form'),
+    'access arguments' => array('configure bunchball'),
+    'file' => 'bunchball.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+
   $items['admin/config/people/bunchball/main'] = array(
     'title' => 'Configuration',
     'type' => MENU_DEFAULT_LOCAL_TASK,

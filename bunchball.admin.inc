@@ -11,6 +11,8 @@ function bunchball_admin_form($form, &$form_state) {
 
   ctools_include('dependent');
 
+  $form['#action'] = url('admin/config/people/bunchball/confirm');
+
   $links = array(
     '!content_actions' => l(t('content actions'), 'admin/config/people/bunchball/entities'),
     '!user_actions' => l(t('user actions'), 'admin/config/people/bunchball/user-interaction'),
@@ -75,6 +77,7 @@ function bunchball_admin_form($form, &$form_state) {
       TRUE => t('Allow user tracking on a per-site basis'),
       FALSE => t('Allow user tracking across multiple sites'),
     ),
+    '#default_value' => variable_get('bunchball_unique_id_include_site_hash', TRUE),
   );
 
   $unique_id_options = array(
@@ -162,7 +165,9 @@ function bunchball_admin_form($form, &$form_state) {
 
   $form['#submit'][] = 'bunchball_admin_form_submit';
 
-  return system_settings_form($form);
+  $form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
+
+  return $form;
 }
 
 /**
@@ -230,7 +235,7 @@ function bunchball_log_page() {
 function bunchball_log_truncate_form($form, &$form_state) {
   $form['truncate'] = array(
     '#type' => 'submit',
-    '#value' => t('Clear logs')
+    '#value' => t('Clear logs'),
   );
 
   return $form;
@@ -238,4 +243,48 @@ function bunchball_log_truncate_form($form, &$form_state) {
 
 function bunchball_log_truncate_form_submit($form, &$form_state) {
   db_query('TRUNCATE TABLE {bunchball_log}');
+}
+
+/**
+ * Bunchball settings confirmation form.
+ *
+ * This form recieves info submitted by bunchball_admin_form().
+ * On changing the unique id a confirmation form is rendered, else the values
+ * are saved without any distraction.
+ *
+ * @see bunchball_admin_form()
+ */
+function bunchball_admin_confirm_form($form, &$form_state) {
+  if (empty($form_state['input'])) {
+    drupal_goto('admin/config/people/bunchball');
+  }
+
+  // If the IDs changed, show a confirmation form.
+  $unique_id_changed = $form_state['input']['bunchball_unique_id'] != variable_get('bunchball_unique_id', 'email');
+  $janirain_unique_id_changed = $form_state['input']['bunchball_janrain_fallback '] != variable_get('bunchball_janrain_fallback ');
+  if ($unique_id_changed || $janirain_unique_id_changed) {
+    $f = array();
+    $f['#submit'][] = 'system_settings_form_submit';
+
+    foreach ($form_state['input'] as $variable_name => $value) {
+      $f[$variable_name] = array(
+        '#type' => 'hidden',
+        '#value' => $value,
+      );
+    }
+
+    return confirm_form($f,
+      t('Are you sure you want to change the User ID settings?'),
+      'admin/config/people/bunchball',
+      t('Since gamification data is currently being tracked, saving changes to User ID settings will reset gamification data for existing users.'),
+      t('Save'),
+      t('Cancel')
+    );
+  }
+
+  // IDs didn't change, save the values and redirect back to the form.
+  $fake_form_state = array('values' => $form_state['input']);
+  system_settings_form_submit($form, $fake_form_state);
+
+  drupal_goto('admin/config/people/bunchball');
 }
