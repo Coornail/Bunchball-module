@@ -61,6 +61,8 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
       $this->options[$key]['update_action'] = $value[$key . '_update_action'];
       $this->options[$key]['comment'] = $value[$key . '_comment_check'];
       $this->options[$key]['comment_action'] = $value[$key . '_comment_action'];
+      $this->options[$key]['comment_receive'] = $value[$key . '_comment_receive_check'];
+      $this->options[$key]['comment_receive_action'] = $value[$key . '_comment_receive_action'];
     }
     variable_set('bunchball_entities', $this->options);
   }
@@ -186,12 +188,31 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
         ),
       ),
     );
+    $form[$id]['author_rewards'][$id . '_comment_receive_check'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Comment receive'),
+      '#default_value' => isset($this->options[$id]['comment_receive']) ? $this->options[$id]['comment_receive'] : NULL,
+    );
+
+    $form[$id]['author_rewards'][$id . '_comment_receive_action'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Nitro action name'),
+      '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
+      '#default_value' => isset($this->options[$id]['comment_receive_action']) ? $this->options[$id]['comment_receive_action'] : NULL,
+      '#states' => array(
+        'invisible' => array(
+          ':input[name$="' . $id . '_comment_receive_check]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
     $form[$id]['user_rewards'][$id . '_comment_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Comment'),
       '#description' => t('Notify the Bunchball service when a user comments on this content type.'),
       '#default_value' => isset($this->options[$id]['comment']) ? $this->options[$id]['comment'] : NULL,
     );
+
     $form[$id]['user_rewards'][$id . '_comment_action'] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
