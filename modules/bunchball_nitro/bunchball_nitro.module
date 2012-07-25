@@ -144,11 +144,11 @@ function _bunchball_nitro_node_post_render($markup, $element) {
   $nitro_youtube_start = variable_get('bunchball_nitro_admin_youtube_start', NULL);
   $nitro_youtube_end = variable_get('bunchball_nitro_admin_youtube_end', NULL);
   drupal_add_js(array(
-    'bunchball_nitro' => array(
-      'artist_name' => isset($element['#node']) ? $element['#node']->title : "N/A",
-      'artist_cat' =>  isset($element['#node']) ? $element['#node']->type : "N/A",
-      'artist_start' => !empty($nitro_youtube_start) ? $nitro_youtube_start : 'youtube_start',
-      'artist_end' => !empty($nitro_youtube_end) ? $nitro_youtube_end : 'youtube_end',
+    'bunchballNitroYoutube' => array(
+      'artistName' => isset($element['#node']) ? $element['#node']->title : "N/A",
+      'artistCategory' =>  isset($element['#node']) ? $element['#node']->type : "N/A",
+      'artistStart' => !empty($nitro_youtube_start) ? $nitro_youtube_start : 'youtube_start',
+      'artistEnd' => !empty($nitro_youtube_end) ? $nitro_youtube_end : 'youtube_end',
     )
   ), 'setting');
 
