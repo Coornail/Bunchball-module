@@ -22,13 +22,14 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   $form['#submit'][] = 'bunchball_nitro_admin_form_submit';
 
   foreach ($node_types as $machine => $human) {
-    $form['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_check"] = array(
+
+    $form['bunchball_entities']['settings']["node_{$machine}"]['user_rewards']["node_{$machine}_view_check"] = array(
       '#type' => 'checkbox',
       '#title' => t('View'),
       '#description' => t('Notify the Bunchball service when a user views this content type.'),
       '#default_value' => isset($nitro_ct_enabled[$machine]) ? 1 : 0,
     );
-    $form['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_action"] = array(
+    $form['bunchball_entities']['settings']["node_{$machine}"]['user_rewards']["node_{$machine}_view_action"] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),

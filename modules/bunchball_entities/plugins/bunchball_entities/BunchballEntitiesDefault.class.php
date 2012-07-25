@@ -135,13 +135,28 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
       '#title' => t($type['name']),
       '#collapsible' => FALSE,
     );
-    $form[$id][$id . '_insert_check'] = array(
+
+    $form[$id]['author_rewards'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Author rewards'),
+      '#collapsible' => FALSE,
+      '#weight' => 1,
+    );
+
+    $form[$id]['user_rewards'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('User rewards'),
+      '#collapsible' => FALSE,
+      '#weight' => 2,
+    );
+
+    $form[$id]['author_rewards'][$id . '_insert_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Create'),
       '#description' => t('Notify the Bunchball service when a user creates this content type.'),
       '#default_value' => isset($this->options[$id]['insert']) ? $this->options[$id]['insert'] : NULL,
     );
-    $form[$id][$id . '_insert_action'] = array(
+    $form[$id]['author_rewards'][$id . '_insert_action'] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
@@ -152,13 +167,13 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
         ),
       ),
     );
-    $form[$id][$id . '_update_check'] = array(
+    $form[$id]['author_rewards'][$id . '_update_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Edit'),
       '#description' => t('Notify the Bunchball service when a user edits this content type.'),
       '#default_value' => isset($this->options[$id]['update']) ? $this->options[$id]['update'] : NULL,
     );
-    $form[$id][$id . '_update_action'] = array(
+    $form[$id]['author_rewards'][$id . '_update_action'] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
@@ -169,13 +184,13 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
         ),
       ),
     );
-    $form[$id][$id . '_comment_check'] = array(
+    $form[$id]['user_rewards'][$id . '_comment_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Comment'),
       '#description' => t('Notify the Bunchball service when a user comments on this content type.'),
       '#default_value' => isset($this->options[$id]['comment']) ? $this->options[$id]['comment'] : NULL,
     );
-    $form[$id][$id . '_comment_action'] = array(
+    $form[$id]['user_rewards'][$id . '_comment_action'] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
