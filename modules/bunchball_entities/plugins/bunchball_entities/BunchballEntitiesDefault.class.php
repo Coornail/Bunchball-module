@@ -53,6 +53,8 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
     $this->options = $this->getDrupalContentTypes();
     $values = $form_state['values']['bunchball_entities']['settings'];
     foreach ($values as $key => $value) {
+      $value = array_merge($value['user_rewards'], $value['author_rewards']);
+
       $this->options[$key]['insert'] = $value[$key . '_insert_check'];
       $this->options[$key]['insert_action'] = $value[$key . '_insert_action'];
       $this->options[$key]['update'] = $value[$key . '_update_check'];
