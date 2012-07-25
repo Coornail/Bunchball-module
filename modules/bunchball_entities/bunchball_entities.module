@@ -90,17 +90,30 @@ function bunchball_entities_node_update($node) {
  * Implements hook_entity_insert().
  */
 function bunchball_entities_entity_insert($entity, $type) {
-  global $user;
-  if ($user->uid > 0) {
-    // authenticated users
-    if ($type == 'comment') {
-      ctools_include('plugins');
-      $node_type = $entity->node_type;
-      $comment_type = (substr($node_type, 0, 8) == 'comment_') ? substr($node_type, 8) : '';
-      $plugins = ctools_get_plugins('bunchball_entities', 'bunchball_entities');
+  if ($type != 'comment') {
+    return;
+  }
+
+  ctools_include('plugins');
+  $plugins = ctools_get_plugins('bunchball_entities', 'bunchball_entities');
+  $node_type = $entity->node_type;
+  $comment_type = (substr($node_type, 0, 8) == 'comment_') ? substr($node_type, 8) : '';
+
+  // Send action for the comment author.
+  if (user_is_logged_in()) {
+    global $user;
+    foreach ($plugins as $id => $plugin) {
+      $class = bunchball_entities_get_plugin_instance($id);
+      $class->send($comment_type, 'comment', $user, 'comment');
+    }
+  }
+
+  // Send action for the node author.
+  if ($node = node_load($entity->nid)) {
+    if ($author = user_load($node->uid)) {
       foreach ($plugins as $id => $plugin) {
         $class = bunchball_entities_get_plugin_instance($id);
-        $class->send($comment_type, 'comment', $user, 'comment');
+        $class->send($comment_type, 'comment', $author, 'comment_receive');
       }
     }
   }
