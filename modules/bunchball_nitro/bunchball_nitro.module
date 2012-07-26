@@ -22,6 +22,25 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   $form['#submit'][] = 'bunchball_nitro_admin_form_submit';
 
   foreach ($node_types as $machine => $human) {
+    $form['bunchball_entities']['settings']["node_{$machine}"]['author_rewards']["node_{$machine}_view_receive_check"] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Receive views'),
+      '#description' => t('Notify the Bunchball service when a user views this content type.'),
+      '#default_value' => isset($nitro_ct_enabled[$machine . '_receive']) ? 1 : 0,
+    );
+    $form['bunchball_entities']['settings']["node_{$machine}"]['author_rewards']["node_{$machine}_view_receive_action"] = array(
+      '#type' => 'textfield',
+      '#title' => t('Nitro action name'),
+      '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
+      '#default_value' => isset($nitro_ct_enabled[$machine . '_receive']) ? $nitro_ct_enabled[$machine . '_receive'] : '',
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#states' => array(
+        'invisible' => array(
+          ':input[name$="node_' . $machine . '_view_receive_check]"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
 
     $form['bunchball_entities']['settings']["node_{$machine}"]['user_rewards']["node_{$machine}_view_check"] = array(
       '#type' => 'checkbox',
@@ -461,12 +480,16 @@ function bunchball_nitro_admin_form_submit($form, &$form_state) {
 
   $action_names = array();
 
-  // check to see which elements are set for action name tracking
+  // Check to see which elements are set for action name tracking.
   $node_types = node_type_get_names();
   foreach ($node_types as $machine => $human) {
-    if($form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_check"] > 0
-        && strlen($form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_action"]) > 0) {
-      $action_names[$machine] = $form_state['values']['bunchball_entities']['settings']["node_{$machine}"]["node_{$machine}_view_action"];
+    $settings = $form_state['values']['bunchball_entities']['settings']["node_{$machine}"];
+    if ($settings['user_rewards']["node_{$machine}_view_check"] && $settings['user_rewards']["node_{$machine}_view_action"]) {
+      $action_names[$machine] = $settings['user_rewards']["node_{$machine}_view_action"];
+    }
+
+    if ($settings['author_rewards']["node_{$machine}_view_receive_check"] && $settings['author_rewards']["node_{$machine}_view_receive_action"]) {
+      $action_names[$machine . '_receive'] = $settings['author_rewards']["node_{$machine}_view_receive_action"];
     }
   }
   variable_set('bunchball_nitro_admin', $action_names);
