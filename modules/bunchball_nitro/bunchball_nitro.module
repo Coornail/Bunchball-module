@@ -166,7 +166,7 @@ function _bunchball_nitro_node_post_render($markup, $element) {
     return $markup;
   }
 
-  _bunchball_nitro_add_content_actions_js();
+  _bunchball_nitro_add_youtube_actions_js();
 
   $nitro_youtube_start = variable_get('bunchball_nitro_admin_youtube_start', NULL);
   $nitro_youtube_end = variable_get('bunchball_nitro_admin_youtube_end', NULL);
@@ -288,6 +288,17 @@ function bunchball_nitro_init() {
     _bunchball_nitro_add_notification_js();
     _bunchball_nitro_add_nml_js();
   }
+}
+
+function _bunchball_nitro_add_youtube_actions_js() {
+  drupal_add_js(
+    drupal_get_path('module', 'bunchball_nitro') . '/bunchball_nitro.youtube.js',
+    array(
+      'type' => 'file',
+      'scope' => 'header',
+      'weight' => 1,
+    )
+  );
 }
 
 function _bunchball_nitro_add_content_actions_js() {
