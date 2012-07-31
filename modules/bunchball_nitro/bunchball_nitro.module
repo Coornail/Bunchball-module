@@ -125,20 +125,28 @@ function bunchball_nitro_node_view($node, $view_mode, $langcode) {
   $nitro_ct_enabled = variable_get('bunchball_nitro_admin', array());
 
   // The user needs to set their settings.
-  if (!isset($nitro_ct_enabled[$node->type])) {
+  if (!(isset($nitro_ct_enabled[$node->type]) || isset($nitro_ct_enabled[$node->type . '_receive']))) {
     return;
   }
 
-  drupal_add_js(array(
-      'bunchballNitroNode' => array(
-        'nodeID' => $node->nid,
-        'nodeUID' => bunchball_get_bunchball_uid($node->uid),
-        'nodeTitle' => $node->title,
-        'nodeCategory' => $node->type,
-        'nodeAction' => $nitro_ct_enabled[$node->type],
-      )),
-    'setting');
+  $node_to_js = array(
+    'bunchballNitroNode' => array(
+      'nodeID' => $node->nid,
+      'nodeUID' => bunchball_get_bunchball_uid($node->uid),
+      'nodeTitle' => $node->title,
+      'nodeCategory' => $node->type,
+    ),
+  );
 
+  if (isset($nitro_ct_enabled[$node->type])) {
+    $node_to_js['bunchballNitroNode']['viewAction'] = $nitro_ct_enabled[$node->type];
+  }
+
+  if (isset($nitro_ct_enabled[$node->type . '_receive'])) {
+    $node_to_js['bunchballNitroNode']['viewReceiveAction'] = $nitro_ct_enabled[$node->type . '_receive'];
+  }
+
+  drupal_add_js($node_to_js, 'setting');
   _bunchball_nitro_add_content_actions_js();
 }
 

@@ -33,17 +33,25 @@ function gotCurrentUserId(inUserId) {
 // ViewedContent is called because the user is currently viewing content.
 function userViewedContent() {
   var nodeData = Drupal.settings.bunchballNitroNode;
-  var sentTags = nodeData.nodeAction + ', Title: ' + nodeData.nodeTitle + ', Category: ' + nodeData.nodeCategory;
+  if (nodeData.viewAction) {
+    var sentTags = nodeData.viewAction + ', Title: ' + nodeData.nodeTitle + ', Category: ' + nodeData.nodeCategory;
 
-  // add requests for all players into the array to walk through.
-  var inObj = {};
-  inObj.uid = _currentUserId;
-  inObj.tags = sentTags;
-  inObj.ses = '';
-  _userCommandsArray.push(inObj);
+    var inObj = {};
+    inObj.uid = _currentUserId;
+    inObj.tags = sentTags;
+    inObj.ses = '';
+    _userCommandsArray.push(inObj);
+  }
 
-  // TODO: here is where you'd check to make sure the users isn't the same as
-  // the creator.
+  if (nodeData.viewReceiveAction) {
+    var sentTags = nodeData.viewReceiveAction + ', Title: ' + nodeData.nodeTitle + ', Category: ' + nodeData.nodeCategory;
+
+    var inObj = {};
+    inObj.uid = nodeData.nodeUID;
+    inObj.tags = sentTags;
+    inObj.ses = '';
+    _userCommandsArray.push(inObj);
+  }
 
   nitroIterateQueue();
 }
