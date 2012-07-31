@@ -6,3 +6,19 @@
 .fieldset-wrapper .form-type-checkbox {
   margin: 8px 0 0 0;
 }
+
+.author-rewards,
+.user-rewards {
+  width: 49%;
+  float: left;
+}
+
+.author-rewards {
+  margin-right: 2%;
+}
+
+.author-rewards > span,
+.user-rewards > span {
+  display: block;
+  font-weight: bold;
+}
