@@ -7,6 +7,18 @@
   margin: 8px 0 0 0;
 }
 
-fieldset.collapsible fieldset.form-wrapper legend span.fieldset-legend {
-  background-image: none;
+.author-rewards,
+.user-rewards {
+  width: 49%;
+  float: left;
+}
+
+.author-rewards {
+  margin-right: 2%;
+}
+
+.author-rewards > span,
+.user-rewards > span {
+  display: block;
+  font-weight: bold;
 }

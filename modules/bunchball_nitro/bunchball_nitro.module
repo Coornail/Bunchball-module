@@ -25,7 +25,6 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
     $form['bunchball_entities']['settings']["node_{$machine}"]['author_rewards']["node_{$machine}_view_receive_check"] = array(
       '#type' => 'checkbox',
       '#title' => t('Receive views'),
-      '#description' => t('Notify the Bunchball service when a user views this content type.'),
       '#default_value' => isset($nitro_ct_enabled[$machine . '_receive']) ? 1 : 0,
     );
     $form['bunchball_entities']['settings']["node_{$machine}"]['author_rewards']["node_{$machine}_view_receive_action"] = array(
@@ -44,8 +43,7 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
 
     $form['bunchball_entities']['settings']["node_{$machine}"]['user_rewards']["node_{$machine}_view_check"] = array(
       '#type' => 'checkbox',
-      '#title' => t('View'),
-      '#description' => t('Notify the Bunchball service when a user views this content type.'),
+      '#title' => t('Viewing'),
       '#default_value' => isset($nitro_ct_enabled[$machine]) ? 1 : 0,
     );
     $form['bunchball_entities']['settings']["node_{$machine}"]['user_rewards']["node_{$machine}_view_action"] = array(
