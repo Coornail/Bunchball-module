@@ -1,12 +1,23 @@
-Drupal.bunchball = Drupal.bunchball || {};
-Drupal.bunchball.userCommandsArray = Drupal.bunchball.userCommandsArray || [];
-
 (function ($) {
+  Drupal.bunchball = Drupal.bunchball || {};
+  Drupal.bunchball.userCommandsArray = Drupal.bunchball.userCommandsArray || [];
+
   Drupal.behaviors.bunchballNitroConnection = {
     attach: function (context, settings) {
       var connectionParams = Drupal.settings.bunchballNitroConnection.connectionParams;
       Drupal.bunchball.nitro = new Nitro(connectionParams);
     }
+  };
+
+  Drupal.bunchball.setUserId = function() {
+    var userId = Drupal.bunchball.nitro.connectionParams.userId;
+    Drupal.bunchball.nitro.setUserId(userId);
+    Drupal.bunchball.nitro.getUserId(Drupal.bunchball.gotCurrentUserId);
+  };
+
+  // Callback function for acquiring the User ID of the current user.
+  Drupal.bunchball.gotCurrentUserId = function(inUserId) {
+    Drupal.bunchball.currentUserId = inUserId;
   };
 
   Drupal.bunchball.WorkerQueue = {
