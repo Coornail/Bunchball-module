@@ -31,4 +31,3 @@ function bunchball_user_roles_enable() {
     ->condition('name', 'bunchball_user_roles')
     ->execute();
 }
-

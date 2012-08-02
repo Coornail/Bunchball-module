@@ -106,8 +106,8 @@ class BunchballEntitiesPoll implements BunchballPluginInterface, BunchballEntiti
     $form = array();
     $form['poll']['check'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Poll vote'),
-      '#description' => t('Notify the Bunchball service when a user votes in a poll.'),
+      '#title' => t('Vote'),
+      '#description' => t('Notify the Bunchball service when a user votes on a poll.'),
       '#default_value' => isset($this->options['poll']['check']) ? $this->options['poll']['check'] : NULL,
     );
     $form['poll']['action'] = array(

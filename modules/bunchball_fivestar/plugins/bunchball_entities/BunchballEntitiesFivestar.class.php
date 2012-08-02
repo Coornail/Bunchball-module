@@ -8,7 +8,7 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
 
   private $options;
   private $nitro;
-  
+
   function __construct() {
     $this->options = variable_get('bunchball_fivestar');
     $this->nitro = NitroAPI_Factory::getInstance();
@@ -16,7 +16,7 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
 
   /**
    * Form callback for this plugin.
-   * 
+   *
    * @param $form
    * @param $form_state
    * @return array
@@ -35,19 +35,19 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
 
   /**
    * Form validation callback for this plugin.
-   * 
+   *
    * @todo check that checkboxes and action textboxes are consistent
-   * 
+   *
    * @param $form
-   * @param $form_state 
+   * @param $form_state
    */
   public function adminFormValidate($form, &$form_state) {}
 
   /**
    * Submit callback for this plugin.
-   * 
+   *
    * @param $form
-   * @param $form_state 
+   * @param $form_state
    */
   public function adminFormSubmit($form, &$form_state) {
     $values = $form_state['values']['bunchball_fivestar']['settings'];
@@ -58,19 +58,19 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
 
   /**
    * AJAX callback.
-   * 
+   *
    * @param $form
    * @param $form_state
    * @param $op
-   * @param $data 
+   * @param $data
    */
   public function adminFormAjax($form, &$form_state, $op, $data) {}
-  
+
   /**
    * Register rating actions.
    *
    * @param $id
-   * @param $type 
+   * @param $type
    * @param $user
    */
   public function send($id, $type, $user, $op) {
@@ -86,7 +86,7 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
       }
     }
   }
-  
+
   private function checkSend() {
     return $this->options['fivestar']['check'];
   }
@@ -94,10 +94,10 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
   private function getActionName() {
     return $this->options['fivestar']['action'];
   }
-  
+
   /**
    * Build the form fields for a content type.
-   * 
+   *
    * @return array
    *    form field elements for one content type
    */
@@ -105,7 +105,7 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
     $form = array();
     $form['fivestar']['check'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Fivestar'),
+      '#title' => t('Rate'),
       '#description' => t('Notify the Bunchball service when a user rates content.'),
       '#default_value' => isset($this->options['fivestar']['check']) ? $this->options['fivestar']['check'] : NULL,
     );
@@ -114,6 +114,11 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
       '#default_value' => isset($this->options['fivestar']['action']) ? $this->options['fivestar']['action'] : NULL,
+      '#states' => array(
+        'invisible' => array(
+          ':input[name$="[fivestar][check]"]' => array('checked' => FALSE),
+        ),
+      ),
     );
     return $form;
   }

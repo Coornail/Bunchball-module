@@ -136,33 +136,27 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
     $form[$id] = array(
       '#type' => 'fieldset',
       '#title' => t($type['name']),
-      '#collapsible' => TRUE,
-      '#description' => t('Notify the Bunchball service when actions are performed on this content type.'),
+      '#collapsible' => FALSE,
     );
 
-    $prefix = '<div class="clearfix"><div' . drupal_attributes(array('class' => array('author-rewards'))) . '><span>' . t('Author rewards') . '</span>';
-    $suffix = '</div>';
     $form[$id]['author_rewards'] = array(
-      '#type' => 'container',
-      '#prefix' => $prefix,
-      '#suffix' => $suffix,
-      '#attributes' => array('class' => array('author-rewards')),
+      '#type' => 'fieldset',
+      '#title' => t('Author rewards'),
+      '#collapsible' => FALSE,
       '#weight' => 1,
     );
 
-    $prefix = '<div' . drupal_attributes(array('class' => array('user-rewards'))) . '><span>' . t('User rewards') . '</span>';
-    $suffix = '</div></div>';
     $form[$id]['user_rewards'] = array(
-      '#type' => 'container',
-      '#prefix' => $prefix,
-      '#suffix' => $suffix,
-      '#attributes' => array('class' => array('user-rewards')),
+      '#type' => 'fieldset',
+      '#title' => t('User rewards'),
+      '#collapsible' => FALSE,
       '#weight' => 2,
     );
 
     $form[$id]['author_rewards'][$id . '_insert_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Create'),
+      '#description' => t('Notify the Bunchball service when a user creates this content type.'),
       '#default_value' => isset($this->options[$id]['insert']) ? $this->options[$id]['insert'] : NULL,
     );
     $form[$id]['author_rewards'][$id . '_insert_action'] = array(
@@ -179,6 +173,7 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
     $form[$id]['author_rewards'][$id . '_update_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Edit'),
+      '#description' => t('Notify the Bunchball service when a user edits this content type.'),
       '#default_value' => isset($this->options[$id]['update']) ? $this->options[$id]['update'] : NULL,
     );
     $form[$id]['author_rewards'][$id . '_update_action'] = array(
@@ -194,7 +189,7 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
     );
     $form[$id]['author_rewards'][$id . '_comment_receive_check'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Receive comments'),
+      '#title' => t('Comment receive'),
       '#default_value' => isset($this->options[$id]['comment_receive']) ? $this->options[$id]['comment_receive'] : NULL,
     );
 
@@ -212,7 +207,8 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
 
     $form[$id]['user_rewards'][$id . '_comment_check'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Commenting'),
+      '#title' => t('Comment'),
+      '#description' => t('Notify the Bunchball service when a user comments on this content type.'),
       '#default_value' => isset($this->options[$id]['comment']) ? $this->options[$id]['comment'] : NULL,
     );
 
