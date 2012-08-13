@@ -52,16 +52,27 @@ class BunchballAdminTestCase extends DrupalWebTestCase {
       'bunchball_apisecret' => md5(mt_rand()),
       'bunchball_environment' => 'sandbox',
       'bunchball_sandbox_url' => 'http://sandbox.bunchball.net/nitro/xml',
+      'bunchball_unique_id' => 'email',
+      'bunchball_client_timeout' => '5',
+      'bunchball_logger_timeout' => '5',
+      'bunchball_debug_mode' => '0',
+      'bunchball_nitro_logger' => 'NitroQueueLogger',
     ));
   }
 
   public function testContentActions() {
     $edit = array();
     $content_types = array('page', 'article');
+    $rewards = array(
+      'author' => array('insert', 'update', 'comment_receive', 'view_receive'),
+      'user' => array('comment', 'view'),
+    );
     foreach ($content_types as $ct) {
-      foreach (array('insert', 'update', 'comment', 'view') as $action) {
-        $edit["bunchball_entities[settings][node_{$ct}][node_{$ct}_{$action}_check]"] = TRUE;
-        $edit["bunchball_entities[settings][node_{$ct}][node_{$ct}_{$action}_action]"] = user_password();
+      foreach ($rewards as $type => $reward) {
+        foreach ($reward as $action) {
+          $edit["bunchball_entities[settings][node_{$ct}][{$type}_rewards][node_{$ct}_{$action}_check]"] = TRUE;
+          $edit["bunchball_entities[settings][node_{$ct}][{$type}_rewards][node_{$ct}_{$action}_action]"] = user_password();
+        }
       }
     }
 

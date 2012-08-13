@@ -57,6 +57,13 @@ function bunchball_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  $items['bunchball/actions'] = array(
+    'title' => 'Bunchball action list',
+    'page callback' => 'bunchball_actions_autocomplete',
+    'access arguments' => array('configure bunchball'),
+    'type' => MENU_CALLBACK,
+  );
+
   return $items;
 }
 
@@ -203,4 +210,25 @@ function _bunchball_is_configured() {
   return variable_get('bunchball_apikey')
     && variable_get('bunchball_apikey')
     && variable_get("bunchball_{$environment}_url");
+}
+
+/**
+ * Page callback for bunchball/actions.
+ */
+function bunchball_actions_autocomplete($string = '') {
+  $matches = array();
+
+  if ($string) {
+    try {
+      foreach (NitroAPI_Factory::getInstance()->getActions() as $result) {
+        if (stripos($result, $string) === 0) {
+          $matches[$result] = check_plain($result);
+        }
+      }
+    } catch (NitroAPI_Exception $ex) {
+      watchdog('bunchball', $ex->getMessage(), array(), WATCHDOG_WARNING);
+    }
+  }
+
+  drupal_json_output($matches);
 }

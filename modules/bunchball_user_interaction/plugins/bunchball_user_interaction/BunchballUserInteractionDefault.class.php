@@ -56,6 +56,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
           ':input[name$="bunchball_user_login_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
 
     $form['bunchball_user_interaction']['bunchball_user_register_check'] = array(
@@ -77,6 +78,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
           ':input[name$="bunchball_user_register_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
 
     $form['bunchball_user_interaction']['bunchball_user_profile_complete_check'] = array(
@@ -98,6 +100,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
           ':input[name$="bunchball_user_profile_complete_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
 
     $form['bunchball_user_interaction']['bunchball_user_profile_picture_check'] = array(
@@ -119,6 +122,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
           ':input[name$="bunchball_user_profile_picture_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
 
     return $form;

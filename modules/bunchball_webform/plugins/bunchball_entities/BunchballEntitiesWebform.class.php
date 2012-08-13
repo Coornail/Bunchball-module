@@ -120,6 +120,7 @@ class BunchballEntitiesWebform implements BunchballPluginInterface, BunchballEnt
           ':input[name$="[webform][check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
     return $form;
   }

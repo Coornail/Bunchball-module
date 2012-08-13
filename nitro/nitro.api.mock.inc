@@ -101,4 +101,8 @@ class NitroAPI_Mock implements NitroAPI {
     drupal_set_message('NITROAPI_MOCK_drupalLogin');
   }
 
+  public function getActions() {
+    // TODO: Implement getActions() method.
+  }
+
 }

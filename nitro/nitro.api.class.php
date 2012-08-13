@@ -84,6 +84,8 @@ interface NitroAPI {
    */
   public function registerCallback($object, $event, $function);
 
+  public function getActions();
+
 }
 
 class NitroAPI_Factory {
@@ -176,13 +178,16 @@ class NitroAPI_XML implements NitroAPI {
   private $apiKey;
   private $userName;
   private $sessionKey;
+  private $adminSessionKey;
   private $user_roles;
   private $callbacks;
   private $logger;
   private $logger_class;
   private $client;
   protected $is_logged_in = FALSE;
+  protected $is_admin_logged_in = FALSE;
   protected $is_session_from_cache = FALSE;
+  protected $is_admin_session_from_cache = FALSE;
 
   // Constants
   private $CRITERIA_MAX = "MAX";
@@ -357,6 +362,63 @@ class NitroAPI_XML implements NitroAPI {
 
     $suffix = ($this->logger_class != 'NitroSynchLogger' ? ' May not return a result immediately due to nonstandard logger %class - check the Bunchball debug log' : '');
     bunchball_debug(__METHOD__ . ' Logging action [actionTag:value]: [%actionTag:%value]' . $suffix, array('%actionTag' => $actionTag, '%value' => $value, '%class' => $this->logger_class));
+  }
+
+  public function loginAdmin() {
+    $unique_id_type = variable_get('bunchball_unique_id', 'email');
+    $cache_key = "ADMIN:$unique_id_type";
+    $cache_entry = cache_get($cache_key, 'cache_bunchball_session');
+
+    if (FALSE && $cache_entry && $cache_entry->data && $cache_entry->expire > REQUEST_TIME) {
+      $this->adminSessionKey = $cache_entry->data;
+      $this->is_admin_session_from_cache = TRUE;
+    }
+    else {
+      $request = url($this->baseURL, array(
+        'query' => array(
+          'method' => 'admin.loginAdmin',
+          'apiKey' => $this->apiKey,
+          'userId' => variable_get('bunchball_admin_userid'),
+          'password' => variable_get('bunchball_admin_password'),
+        ),
+      ));
+
+      $xml = $this->client->request($request);
+
+      $this->adminSessionKey = strval(reset($xml->xpath('/Nitro/Login/sessionKey')));
+
+      // Cache expires in 72 hours - 1 minute
+      $expiration_time = REQUEST_TIME + ((72 * 60 * 60) - 60);
+      cache_set($cache_key, $this->adminSessionKey, 'cache_bunchball_session', $expiration_time);
+    }
+
+    $this->is_admin_logged_in = TRUE;
+  }
+
+  public function getActions() {
+    if (!$this->is_admin_logged_in) {
+      $this->loginAdmin();
+    }
+    $request = url($this->baseURL, array(
+      'query' => array(
+        'method' => 'admin.getActionTags',
+        'sessionKey' => $this->adminSessionKey,
+      ),
+    ));
+
+    $xml = $this->client->request($request);
+
+    if ($xml->xpath('//Error')) {
+      throw new NitroAPI_Exception('Error retrieving getActions.');
+    }
+
+    $result = array();
+
+    foreach ($xml->xpath('//Tag') as $node) {
+      $result[] = (string) $node['name'];
+    }
+
+    return $result;
   }
 
   /**

@@ -119,6 +119,7 @@ class BunchballEntitiesFivestar implements BunchballPluginInterface, BunchballEn
           ':input[name$="[fivestar][check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
     return $form;
   }

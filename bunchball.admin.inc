@@ -35,6 +35,20 @@ function bunchball_admin_form($form, &$form_state) {
     '#required' => TRUE,
   );
 
+  $form['bunchball_admin_userid'] = array(
+    '#type' => 'textfield',
+    '#default_value' => isset($form_state['values']['bunchball_admin_userid']) ? $form_state['values']['bunchball_admin_userid'] : variable_get('bunchball_admin_userid'),
+    '#title' => t('Admin username'),
+    '#required' => TRUE,
+  );
+
+  $form['bunchball_admin_password'] = array(
+    '#type' => 'password',
+    '#default_value' => isset($form_state['values']['bunchball_admin_password']) ? $form_state['values']['bunchball_admin_password'] : variable_get('bunchball_admin_password'),
+    '#title' => t('Admin password'),
+    '#preserve' => TRUE,
+  );
+
   $form['bunchball_environment'] = array(
     '#type' => 'select',
     '#description' => t('Point to Sandbox for testing and Production for your live environment.'),
@@ -284,6 +298,9 @@ function bunchball_admin_confirm_form($form, &$form_state) {
 
   // IDs didn't change, save the values and redirect back to the form.
   $fake_form_state = array('values' => $form_state['input'], 'buttons' => array());
+  if (!$form_state['input']['bunchball_admin_password']) {
+    $fake_form_state['values']['bunchball_admin_password'] = variable_get('bunchball_admin_password');
+  }
   system_settings_form_submit($form, $fake_form_state);
 
   drupal_goto('admin/config/people/bunchball');

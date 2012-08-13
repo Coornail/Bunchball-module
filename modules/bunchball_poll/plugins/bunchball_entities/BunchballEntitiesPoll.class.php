@@ -120,6 +120,7 @@ class BunchballEntitiesPoll implements BunchballPluginInterface, BunchballEntiti
           ':input[name$="[poll][check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
     return $form;
   }

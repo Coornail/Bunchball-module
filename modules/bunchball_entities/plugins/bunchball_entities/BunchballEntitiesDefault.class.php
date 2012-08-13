@@ -175,6 +175,7 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
           ':input[name$="' . $id . '_insert_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
     $form[$id]['author_rewards'][$id . '_update_check'] = array(
       '#type' => 'checkbox',
@@ -191,6 +192,7 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
           ':input[name$="' . $id . '_update_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
     $form[$id]['author_rewards'][$id . '_comment_receive_check'] = array(
       '#type' => 'checkbox',
@@ -208,6 +210,7 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
           ':input[name$="' . $id . '_comment_receive_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
 
     $form[$id]['user_rewards'][$id . '_comment_check'] = array(
@@ -226,6 +229,7 @@ class BunchballEntitiesDefault implements BunchballPluginInterface, BunchballEnt
           ':input[name$="' . $id . '_comment_check]"]' => array('checked' => FALSE),
         ),
       ),
+      '#autocomplete_path' => 'bunchball/actions',
     );
     return $form;
   }
