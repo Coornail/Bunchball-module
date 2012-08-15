@@ -184,3 +184,102 @@ class BunchballNitroTestCase extends DrupalWebTestCase {
 
 }
 
+class BunchballActionsTestCase extends DrupalWebTestCase {
+
+  protected $account;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Bunchball actions test',
+      'description' => 'Creates an action and tests it.',
+      'group' => BUNCHBALL_TEST_CATEGORY,
+    );
+  }
+
+  protected function setUp() {
+    parent::setUp(
+      'bunchball',
+      'bunchball_nitro',
+      'bunchball_queue',
+      'bunchball_entities',
+      'bunchball_fivestar',
+      'bunchball_groups',
+      'bunchball_queue',
+      'bunchball_poll',
+      'bunchball_user_interaction',
+      'bunchball_user_roles',
+      'bunchball_webform'
+    );
+
+    $this->account = $this->drupalCreateUser();
+  }
+
+  public function testAction() {
+    $this->overrideVariables();
+
+    $nitro = NitroAPI_Factory::getInstance();
+    $nitro->drupalLogin($this->account);
+    $nitro->loginAdmin();
+    $this->assertTrue($nitro->is_admin_logged_in, 'Admin successfully logged in');
+
+    $tagname = $this->createAction($nitro);
+    $this->executeAction($nitro, $tagname);
+    $this->checkResult($nitro, $tagname);
+  }
+
+  protected function overrideVariables() {
+    $bunchball_variables = Database::getConnection('simpletest_original_default')
+      ->query('SELECT name, value FROM {variables} WHERE name LIKE :bunchball', array(
+        ':bunchball' => 'bunchball_%',
+      ))
+      ->fetchAllKeyed();
+    $bunchball_variables['bunchball_environment'] = 'sandbox';
+    foreach ($bunchball_variables as $name => $value) {
+      variable_set($name, $value);
+    }
+  }
+
+  protected function createAction(NitroAPI_XML $nitro) {
+    $tagname = 'drupal_simpletest_' . $this->randomString();
+    $request = url($nitro->baseURL, array(
+      'query' => array(
+        'method' => 'admin.createActionTag',
+        'sessionKey' => $nitro->adminSessionKey,
+        'name' => $tagname,
+        'category' => '0',
+        'description' => 'Tag created by simpletest. It\'s safe to remove.',
+        'lowSecurity' => '1',
+      ),
+    ));
+
+    $xml = $nitro->client->request($request);
+
+    $this->assertFalse((boolean) $xml->xpath('//Error'), 'Error not found in the createActionTag response.');
+
+    return $tagname;
+  }
+
+  protected function executeAction(NitroAPI_XML $nitro, $tagname) {
+    $nitro->logAction($tagname);
+  }
+
+  protected function checkResult(NitroAPI_XML $nitro, $tagname) {
+    $request = url($nitro->baseURL, array(
+      'query' => array(
+        'method' => 'user.getActionHistory',
+        'sessionKey' => $nitro->sessionKey,
+      ),
+    ));
+
+    $xml = $nitro->client->request($request);
+    $this->assertFalse((boolean) $xml->xpath('Error'), 'Error not found in getActionHistory response.');
+    $found = FALSE;
+    foreach ($xml->xpath('//ActionHistoryItem') as $node) {
+      if ($node['tags'] == $tagname) {
+        $found = TRUE;
+        break;
+      }
+    }
+    $this->assertTrue($found, 'Found inserted action.');
+  }
+}
