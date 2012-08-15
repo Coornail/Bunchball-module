@@ -173,21 +173,21 @@ class NitroSynchLogger implements NitroLogger {
 
 class NitroAPI_XML implements NitroAPI {
 
-  private $baseURL;
-  private $secretKey;
-  private $apiKey;
-  private $userName;
-  private $sessionKey;
-  private $adminSessionKey;
-  private $user_roles;
-  private $callbacks;
-  private $logger;
-  private $logger_class;
-  private $client;
-  protected $is_logged_in = FALSE;
-  protected $is_admin_logged_in = FALSE;
-  protected $is_session_from_cache = FALSE;
-  protected $is_admin_session_from_cache = FALSE;
+  public $baseURL;
+  public $secretKey;
+  public $apiKey;
+  public $userName;
+  public $sessionKey;
+  public $adminSessionKey;
+  public $user_roles;
+  public $callbacks;
+  public $logger;
+  public $logger_class;
+  public $client;
+  public $is_logged_in = FALSE;
+  public $is_admin_logged_in = FALSE;
+  public $is_session_from_cache = FALSE;
+  public $is_admin_session_from_cache = FALSE;
 
   // Constants
   private $CRITERIA_MAX = "MAX";
