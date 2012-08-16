@@ -284,7 +284,7 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
     ));
 
     $xml = $nitro->client->request($request);
-    $this->assertFalse((boolean) $xml->xpath('Error'), 'Error not found in getActionHistory response.');
+    $this->assertFalse((boolean) $xml->xpath('//Error'), 'Error not found in getActionHistory response.');
     $found = FALSE;
     foreach ($xml->xpath('//ActionHistoryItem') as $node) {
       if ($node['tags'] == $tagname) {
