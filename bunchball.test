@@ -217,14 +217,21 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
   public function testAction() {
     $this->overrideVariables();
 
-    $nitro = NitroAPI_Factory::getInstance();
-    $nitro->drupalLogin($this->account);
-    $nitro->loginAdmin();
-    $this->assertTrue($nitro->is_admin_logged_in, 'Admin successfully logged in');
+    try {
+      $nitro = NitroAPI_Factory::getInstance();
+      $nitro->drupalLogin($this->account);
+      $nitro->loginAdmin();
+      $this->assertTrue($nitro->is_admin_logged_in, 'Admin successfully logged in');
 
-    $tagname = $this->createAction($nitro);
-    $this->executeAction($nitro, $tagname);
-    $this->checkResult($nitro, $tagname);
+      $tagname = $this->createAction($nitro);
+      $this->executeAction($nitro, $tagname);
+      $this->checkResult($nitro, $tagname);
+    } catch (Exception $e) {
+      $this->fail(t('Error @num: @message', array(
+        '@num' => $e->getCode(),
+        '@message' => $e->getMessage(),
+      )));
+    }
   }
 
   protected function overrideVariables() {
