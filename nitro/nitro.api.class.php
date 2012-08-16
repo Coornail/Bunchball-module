@@ -140,7 +140,7 @@ class NitroSynchClient implements NitroClient {
       return new SimpleXMLElement($response->data);
     }
     else {
-      throw new NitroAPI_HttpException();
+      throw new NitroAPI_HttpException($response->error, $response->code);
     }
   }
 }
@@ -166,7 +166,7 @@ class NitroSynchLogger implements NitroLogger {
       return $xml;
     }
     else {
-      throw new NitroAPI_HttpException();
+      throw new NitroAPI_HttpException($response->error, $response->code);
     }
   }
 }
