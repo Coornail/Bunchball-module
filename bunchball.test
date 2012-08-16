@@ -228,7 +228,7 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
   }
 
   protected function overrideVariables() {
-    $bunchball_variables = Database::getConnection('simpletest_original_default')
+    $bunchball_variables = Database::getConnection('default', 'simpletest_original_default')
       ->query('SELECT name, value FROM {variables} WHERE name LIKE :bunchball', array(
         ':bunchball' => 'bunchball_%',
       ))
