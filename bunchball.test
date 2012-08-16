@@ -240,7 +240,7 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
         ':bunchball' => 'bunchball_%',
       ))
       ->fetchAllKeyed();
-    $bunchball_variables['bunchball_environment'] = 'sandbox';
+    $bunchball_variables['bunchball_environment'] = serialize('sandbox');
     foreach ($bunchball_variables as $name => $value) {
       $value = unserialize($value);
       variable_set($name, $value);
