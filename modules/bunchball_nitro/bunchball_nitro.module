@@ -68,12 +68,14 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   $form['bunchball_nitro']['element_youtube'] = array(
     '#type' => 'fieldset',
     '#title' => t('Youtube'),
+    '#description' => t('Notify the Bunchball service when a user plays a video.'),
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
   $form['bunchball_nitro']['element_youtube']['youtube_start_checkbox'] = array(
     '#type' => 'checkbox',
     '#title' => t('Start video'),
+    '#prefix' => $prefix = '<div' . drupal_attributes(array('class' => array('user-rewards'))) . '><span>' . t('User rewards') . '</span>',
     '#default_value' => !empty($nitro_youtube_start) ? 1 : 0,
   );
   $form['bunchball_nitro']['element_youtube']['youtube_start_action'] = array(
