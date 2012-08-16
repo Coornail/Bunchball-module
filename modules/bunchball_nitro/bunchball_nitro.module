@@ -67,14 +67,13 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
 
   $form['bunchball_nitro']['element_youtube'] = array(
     '#type' => 'fieldset',
-    '#title' => t('YouTube'),
+    '#title' => t('Youtube'),
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
   $form['bunchball_nitro']['element_youtube']['youtube_start_checkbox'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Start YouTube video'),
-    '#description' => t('Notify the Bunchball service when a user starts playing a video.'),
+    '#title' => t('Start video'),
     '#default_value' => !empty($nitro_youtube_start) ? 1 : 0,
   );
   $form['bunchball_nitro']['element_youtube']['youtube_start_action'] = array(
@@ -92,8 +91,7 @@ function bunchball_form_bunchball_entities_admin_form_alter(&$form, &$form_state
   );
   $form['bunchball_nitro']['element_youtube']['youtube_end_checkbox'] = array(
     '#type' => 'checkbox',
-    '#title' => t('End YouTube video'),
-    '#description' => t('Notify the Bunchball service when a video playing has ended for user.'),
+    '#title' => t('End video'),
     '#default_value' => !empty($nitro_youtube_end) ? 1 : 0,
   );
   $form['bunchball_nitro']['element_youtube']['youtube_end_action'] = array(
