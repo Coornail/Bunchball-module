@@ -26,10 +26,11 @@ class BunchballUserRoles implements BunchballPluginInterface, BunchballUserInter
    */
   public function adminForm($form, &$form_state) {
     $form['bunchball_user_roles'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('User roles'),
-        '#collapsible' => TRUE,
-        '#tree' => TRUE,
+      '#type' => 'fieldset',
+      '#title' => t('Level synchronization'),
+      '#description' => t("Create and approve roles that match your Bunchball levels names. The Bunchball service will apply those roles to a user's account when they are promoted within your Bunchball gamification experience."),
+      '#collapsible' => TRUE,
+      '#tree' => TRUE,
     );
     $form['bunchball_user_roles']['settings'] = $this->buildFields();
 
@@ -104,8 +105,7 @@ class BunchballUserRoles implements BunchballPluginInterface, BunchballUserInter
     $role_list = drupal_map_assoc(array_diff($all_roles, $blacklist_roles));
     $form['roles']['whitelist'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Approved user roles'),
-      '#description' => t('Indicate the roles Bunchball can automatically apply to users when they are promoted.'),
+      '#title' => t('User roles'),
       '#options' => $role_list,
       '#default_value' => isset($this->options['roles']['whitelist']) ? $this->options['roles']['whitelist'] : NULL,
     );
