@@ -241,6 +241,7 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
       ))
       ->fetchAllKeyed();
     $bunchball_variables['bunchball_environment'] = serialize('sandbox');
+    $bunchball_variables['bunchball_nitro_logger'] = serialize('NitroSynchLogger');
     foreach ($bunchball_variables as $name => $value) {
       $value = unserialize($value);
       variable_set($name, $value);
