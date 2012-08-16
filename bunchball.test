@@ -242,6 +242,7 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
       ->fetchAllKeyed();
     $bunchball_variables['bunchball_environment'] = 'sandbox';
     foreach ($bunchball_variables as $name => $value) {
+      $value = unserialize($value);
       variable_set($name, $value);
       $this->verbose(t('Variable @var is set to @value', array(
         '@var' => $name,
