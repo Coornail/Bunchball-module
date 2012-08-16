@@ -243,6 +243,10 @@ class BunchballActionsTestCase extends DrupalWebTestCase {
     $bunchball_variables['bunchball_environment'] = 'sandbox';
     foreach ($bunchball_variables as $name => $value) {
       variable_set($name, $value);
+      $this->verbose(t('Variable @var is set to @value', array(
+        '@var' => $name,
+        '@value' => is_scalar($value) ? ((string) $value) : var_export($value, TRUE)
+      )));
     }
   }
 
