@@ -275,8 +275,10 @@ function bunchball_admin_confirm_form($form, &$form_state) {
 
   // If the IDs changed, show a confirmation form.
   $unique_id_changed = $form_state['input']['bunchball_unique_id'] != variable_get('bunchball_unique_id', 'email');
-  $janirain_unique_id_changed = $form_state['input']['bunchball_janrain_fallback'] != variable_get('bunchball_janrain_fallback');
-  if ($unique_id_changed || $janirain_unique_id_changed) {
+  $janrain_unique_id_changed = module_exists('janrain_capture') ?
+    ($form_state['input']['bunchball_janrain_fallback'] != variable_get('bunchball_janrain_fallback')) :
+    FALSE;
+  if ($unique_id_changed || $janrain_unique_id_changed) {
     $f = array();
     $f['#submit'][] = 'system_settings_form_submit';
 
