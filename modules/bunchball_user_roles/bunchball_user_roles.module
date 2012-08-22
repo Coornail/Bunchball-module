@@ -7,9 +7,9 @@
 
 /**
  * Implements hook_init().
- * 
+ *
  *  - instantiate plugin so that callbacks are initiated.
- * 
+ *
  * @global $user
  */
 function bunchball_user_roles_init() {
@@ -19,9 +19,17 @@ function bunchball_user_roles_init() {
     ctools_include('plugins');
     $plugin = ctools_get_plugins('bunchball_user_interaction', 'bunchball_user_interaction', 'BunchballUserRoles');
     $class = ctools_plugin_get_class($plugin, 'handler');
-    $instance = new $class; //initiate callback
+    if (!empty($class) && class_exists($class)) {
+      $instance = new $class; //initiate callback
+    }
+    else {
+      watchdog('bunchball_user_roles', 'Class (@class) could not be initiated, see loaded ctools plugin data: @plugin', array(
+            'class' => $class,
+            'plugin' => $plugin
+            ));
+    }
   }
-    
+
 }
 
 
@@ -33,3 +41,4 @@ function bunchball_user_roles_ctools_plugin_directory($module, $plugin) {
     return 'plugins/bunchball_user_interaction';
   }
 }
+
