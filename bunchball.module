@@ -163,8 +163,15 @@ function bunchball_get_bunchball_uid($uid, $unique_id_type = NULL) {
       }
       else {
         // If Janrain UUID cannot be found for the user, use the fallback.
-        $unique_id_fallback = variable_get('bunchball_janrain_fallback', 'email');
-        return bunchball_get_bunchball_uid($uid, $unique_id_fallback);
+        return bunchball_userid_fallback($account);
+      }
+      break;
+
+    default:
+      $account = user_load($uid);
+      $unique_id = reset(module_invoke_all('bunchball_userid', $account, $unique_id_type));
+      if (empty($unique_id)) {
+        return bunchball_userid_fallback($account);
       }
       break;
   }
@@ -174,6 +181,14 @@ function bunchball_get_bunchball_uid($uid, $unique_id_type = NULL) {
   }
 
   return $unique_id;
+}
+
+/**
+ * Supply the fallback bunchball userid if the primary choice is not available.
+ */
+function bunchball_userid_fallback($account) {
+  $unique_id_fallback = variable_get('bunchball_janrain_fallback', 'email');
+  return bunchball_get_bunchball_uid($account->uid, $unique_id_fallback);
 }
 
 /**

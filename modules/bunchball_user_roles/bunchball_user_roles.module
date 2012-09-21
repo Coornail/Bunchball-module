@@ -24,9 +24,9 @@ function bunchball_user_roles_init() {
     }
     else {
       watchdog('bunchball_user_roles', 'Class (@class) could not be initiated, see loaded ctools plugin data: @plugin', array(
-            'class' => $class,
-            'plugin' => $plugin
-            ));
+        'class' => $class,
+        'plugin' => $plugin
+      ));
     }
   }
 
@@ -41,4 +41,3 @@ function bunchball_user_roles_ctools_plugin_directory($module, $plugin) {
     return 'plugins/bunchball_user_interaction';
   }
 }
-
