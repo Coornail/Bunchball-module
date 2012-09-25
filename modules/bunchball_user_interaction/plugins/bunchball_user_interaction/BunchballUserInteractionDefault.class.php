@@ -6,7 +6,7 @@
  * module.
  */
 
-class BunchballUserInteractionDefault implements BunchballUserInteractionInterface, BunchballPluginInterface{
+class BunchballUserInteractionDefault implements BunchballUserInteractionInterface, BunchballPluginInterface {
 
   private $options;
 
@@ -14,10 +14,12 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    * @param $api a class implmenting the NitroAPI interface (could be json or xml)
    */
   function __construct(NitroAPI $api) {
-    $this->options['bunchball_user_login'] = variable_get('bunchball_user_login','');
+    $this->options['bunchball_user_login'] = variable_get('bunchball_user_login', '');
     $this->options['bunchball_user_register'] = variable_get('bunchball_user_register', '');
     $this->options['bunchball_user_profile_complete'] = variable_get('bunchball_user_profile_complete', '');
-    $this->options['bunchball_user_profile_picture'] = variable_get('bunchball_user_profile_picture', '');
+    $this->options['bunchball_user_profile_picture_add'] = variable_get('bunchball_user_profile_picture_add', '');
+    $this->options['bunchball_user_profile_picture_update'] = variable_get('bunchball_user_profile_picture_update', '');
+    $this->options['bunchball_user_profile_picture_remove'] = variable_get('bunchball_user_profile_picture_remove', '');
     $this->bunchballApi = $api;
   }
 
@@ -103,23 +105,67 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
       '#autocomplete_path' => 'bunchball/actions',
     );
 
-    $form['bunchball_user_interaction']['bunchball_user_profile_picture_check'] = array(
+    $form['bunchball_user_interaction']['bunchball_user_profile_picture_add_check'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Profile picture upload'),
+      '#title' => t('Profile picture added'),
       '#description' => t('Notify the Bunchball service when a user uploads a profile picture.'),
-      '#default_value' => isset($this->options['bunchball_user_profile_picture']['enabled']) ?
-        $this->options['bunchball_user_profile_picture']['enabled'] : array(),
+      '#default_value' => isset($this->options['bunchball_user_profile_picture_add']['enabled']) ?
+        $this->options['bunchball_user_profile_picture_add']['enabled'] : array(),
     );
 
-    $form['bunchball_user_interaction']['bunchball_user_profile_picture_action'] = array(
+    $form['bunchball_user_interaction']['bunchball_user_profile_picture_add_action'] = array(
       '#type' => 'textfield',
       '#title' => t('Nitro action name'),
       '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
-      '#default_value' => isset($this->options['bunchball_user_profile_picture']['method']) ?
-        $this->options['bunchball_user_profile_picture']['method'] : NULL,
+      '#default_value' => isset($this->options['bunchball_user_profile_picture_add']['method']) ?
+        $this->options['bunchball_user_profile_picture_add']['method'] : NULL,
       '#states' => array(
         'invisible' => array(
-          ':input[name$="bunchball_user_profile_picture_check]"]' => array('checked' => FALSE),
+          ':input[name$="bunchball_user_profile_picture_add_check]"]' => array('checked' => FALSE),
+        ),
+      ),
+      '#autocomplete_path' => 'bunchball/actions',
+    );
+
+    $form['bunchball_user_interaction']['bunchball_user_profile_picture_update_check'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Profile picture update'),
+      '#description' => t('Notify the Bunchball service when a user uploads a profile picture.'),
+      '#default_value' => isset($this->options['bunchball_user_profile_picture_update']['enabled']) ?
+        $this->options['bunchball_user_profile_picture_update']['enabled'] : array(),
+    );
+
+    $form['bunchball_user_interaction']['bunchball_user_profile_picture_update_action'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Nitro action name'),
+      '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
+      '#default_value' => isset($this->options['bunchball_user_profile_picture_update']['method']) ?
+        $this->options['bunchball_user_profile_picture_update']['method'] : NULL,
+      '#states' => array(
+        'invisible' => array(
+          ':input[name$="bunchball_user_profile_picture_update_check]"]' => array('checked' => FALSE),
+        ),
+      ),
+      '#autocomplete_path' => 'bunchball/actions',
+    );
+
+    $form['bunchball_user_interaction']['bunchball_user_profile_picture_remove_check'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Profile picture removal'),
+      '#description' => t('Notify the Bunchball service when a user uploads a profile picture.'),
+      '#default_value' => isset($this->options['bunchball_user_profile_picture_remove']['enabled']) ?
+        $this->options['bunchball_user_profile_picture_remove']['enabled'] : array(),
+    );
+
+    $form['bunchball_user_interaction']['bunchball_user_profile_picture_remove_action'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Nitro action name'),
+      '#description' => t('The machine name used to map this action to your Bunchball Nitro Server.'),
+      '#default_value' => isset($this->options['bunchball_user_profile_picture_remove']['method']) ?
+        $this->options['bunchball_user_profile_picture_remove']['method'] : NULL,
+      '#states' => array(
+        'invisible' => array(
+          ':input[name$="bunchball_user_profile_picture_remove_check]"]' => array('checked' => FALSE),
         ),
       ),
       '#autocomplete_path' => 'bunchball/actions',
@@ -138,45 +184,27 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    */
   public function adminFormSubmit($form, &$form_state) {
     $values = $form_state['values'];
-    if ($values['bunchball_user_interaction']['bunchball_user_login_check']) {
-      $login_value = array(
-          'enabled'=>1,
-          'method' => $values['bunchball_user_interaction']['bunchball_user_login_action'],
-          );
-      variable_set('bunchball_user_login', $login_value);
-    }
-    else {
-      variable_set('bunchball_user_login', array('enabled'=> 0, 'method' => ''));
-    }
-    if ($values['bunchball_user_interaction']['bunchball_user_register_check']) {
-      $register_value = array(
+
+    $bunchball_actions = array(
+      'bunchball_user_login',
+      'bunchball_user_register',
+      'bunchball_user_profile_complete',
+      'bunchball_user_profile_picture_add',
+      'bunchball_user_profile_picture_update',
+      'bunchball_user_profile_picture_remove',
+    );
+
+    foreach ($bunchball_actions as $bunchball_action) {
+      if ($values['bunchball_user_interaction'][$bunchball_action . '_check']) {
+        $login_value = array(
           'enabled' => 1,
-          'method' => $values['bunchball_user_interaction']['bunchball_user_register_action'],
-          );
-      variable_set('bunchball_user_register', $register_value);
-    }
-    else {
-      variable_set('bunchball_user_register', array('enabled'=> 0, 'method' => ''));
-    }
-    if ($values['bunchball_user_interaction']['bunchball_user_profile_complete_check']) {
-      $profile_value = array(
-          'enabled' => 1,
-          'method'  => $values['bunchball_user_interaction']['bunchball_user_profile_complete_action'],
-          );
-      variable_set('bunchball_user_profile_complete', $profile_value);
-    }
-    else {
-      variable_set('bunchball_user_profile_complete', array('enabled'=> 0, 'method' => ''));
-    }
-    if ($values['bunchball_user_interaction']['bunchball_user_profile_picture_check']) {
-      $picture_value = array(
-          'enabled' => 1,
-          'method'  => $values['bunchball_user_interaction']['bunchball_user_profile_picture_action']
-          );
-      variable_set('bunchball_user_profile_picture', $picture_value);
-    }
-    else {
-      variable_set('bunchball_user_profile_picture', array('enabled'=> 0, 'method' => ''));
+          'method' => $values['bunchball_user_interaction'][$bunchball_action . '_action'],
+        );
+        variable_set($bunchball_action, $login_value);
+      }
+      else {
+        variable_set($bunchball_action, array('enabled' => FALSE, 'method' => ''));
+      }
     }
   }
 
@@ -213,8 +241,16 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
         $this->userProfileComplete($user);
         break;
 
-      case 'profilePicture':
-        $this->userProfilePicture($user);
+      case 'profilePictureAdd':
+        $this->userProfilePictureAdd($user);
+        break;
+
+      case 'profilePictureUpdate':
+        $this->userProfilePictureUpdate($user);
+        break;
+
+      case 'profilePictureRemove':
+        $this->userProfilePictureRemove($user);
         break;
 
     }
@@ -315,18 +351,91 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    * profile picture has been uploaded to bunchball passing whichever arguments
    * the implementer would like.
    *
-   * @param $user - a valid drupal user object
+   * @param $user
+   *   A valid drupal user object
    */
-  private function userProfilePicture($user) {
-    if ($this->options['bunchball_user_profile_picture']['enabled']) {
+  private function userProfilePictureAdd($user) {
+    if ($this->options['bunchball_user_profile_picture_add']['enabled']) {
       try {
         $this->apiUserLogin($user);
-        if (isset($user->picture_upload)) {
-          $action = $this->options['bunchball_user_profile_picture']['method'];
+        if ($this->isUserPictureUploaded($user) && !$this->isUserPictureAlreadyPresent($user)) {
+          $action = $this->options['bunchball_user_profile_picture_add']['method'];
           $this->bunchballApi->logAction($action);
         }
       }
       catch (NitroAPI_LogActionException $e) {
+        drupal_set_message($e->getMessage(), 'error');
+      }
+    }
+  }
+
+  /**
+   * Checks if the user picture is about to be uploaded.
+   *
+   * @param $account object
+   *   Drupal user account.
+   */
+  protected function isUserPictureUploaded($account) {
+    return isset($account->picture_upload) && $account->picture_upload;
+  }
+
+  /**
+   * Checks if the user picture is present on the user object.
+   *
+   * @param $account object
+   *   Drupal user account.
+   */
+  protected function isUserPictureAlreadyPresent($account) {
+    return isset($user->picture) && $user->picture;
+  }
+
+  /**
+   * Checks if the user picture is currently being removed.
+   *
+   * @param $account object
+   *   Drupal user account.
+   */
+  protected function isUserPictureRemoved($account) {
+    return isset($account->picture_delete) && $account->picture_delete;
+  }
+
+  /**
+   * Plugin callback for updating the profile picture.
+   *
+   * @param $account object
+   *   Drupal user account.
+   */
+  protected function userProfilePictureUpdate($user) {
+    if ($this->options['bunchball_user_profile_picture_update']['enabled']) {
+      try {
+        $this->apiUserLogin($user);
+        if ($this->isUserPictureUploaded($user) && $this->isUserPictureAlreadyPresent($user)) {
+          $action = $this->options['bunchball_user_profile_picture_update']['method'];
+          $this->bunchballApi->logAction($action);
+        }
+      }
+      catch(NitroAPI_LogActionException $e) {
+        drupal_set_message($e->getMessage(), 'error');
+      }
+    }
+  }
+
+  /**
+   * Plugin callback for removing the profile picture.
+   *
+   * @param $account object
+   *   Drupal user account.
+   */
+  protected function userProfilePictureRemove($account) {
+    if ($this->options['bunchball_user_profile_picture_remove']['enabled']) {
+      try {
+        $this->apiUserLogin($account);
+        if ($this->isUserPictureRemoved($account)) {
+          $action = $this->options['bunchball_user_profile_picture_remove']['method'];
+          $this->bunchballApi->logAction($action);
+        }
+      }
+      catch(NitroAPI_LogActionException $e) {
         drupal_set_message($e->getMessage(), 'error');
       }
     }

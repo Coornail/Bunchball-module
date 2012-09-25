@@ -39,7 +39,9 @@ function bunchball_user_interaction_user_update(&$edit, $account, $category) {
   foreach ($plugins as $id => $plugin) {
     $class = bunchball_user_interaction_get_plugin_instance($id);
     $class->send($account, 'profileComplete');
-    $class->send($account, 'profilePicture');
+    $class->send($account, 'profilePictureAdd');
+    $class->send($account, 'profilePictureUpdate');
+    $class->send($account, 'profilePictureRemove');
   }
 }
 
