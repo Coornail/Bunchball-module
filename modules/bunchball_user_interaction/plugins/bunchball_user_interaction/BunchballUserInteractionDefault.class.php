@@ -386,7 +386,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    *   Drupal user account.
    */
   protected function isUserPictureAlreadyPresent($account) {
-    return isset($user->picture) && $user->picture;
+    return isset($account->picture) && $account->picture;
   }
 
   /**
