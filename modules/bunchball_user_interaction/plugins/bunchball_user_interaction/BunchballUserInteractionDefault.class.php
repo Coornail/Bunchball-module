@@ -130,7 +130,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
     $form['bunchball_user_interaction']['bunchball_user_profile_picture_update_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Profile picture update'),
-      '#description' => t('Notify the Bunchball service when a user uploads a profile picture.'),
+      '#description' => t('Notify the Bunchball service when a user updates a profile picture.'),
       '#default_value' => isset($this->options['bunchball_user_profile_picture_update']['enabled']) ?
         $this->options['bunchball_user_profile_picture_update']['enabled'] : array(),
     );
@@ -152,7 +152,7 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
     $form['bunchball_user_interaction']['bunchball_user_profile_picture_remove_check'] = array(
       '#type' => 'checkbox',
       '#title' => t('Profile picture removal'),
-      '#description' => t('Notify the Bunchball service when a user uploads a profile picture.'),
+      '#description' => t('Notify the Bunchball service when a user removes a profile picture.'),
       '#default_value' => isset($this->options['bunchball_user_profile_picture_remove']['enabled']) ?
         $this->options['bunchball_user_profile_picture_remove']['enabled'] : array(),
     );
