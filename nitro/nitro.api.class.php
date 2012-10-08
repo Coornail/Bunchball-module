@@ -209,9 +209,6 @@ class NitroAPI_XML implements NitroAPI {
       case 'sandbox':
         $this->baseURL = variable_get('bunchball_sandbox_url');
         break;
-
-      default:
-        break;
     }
     $this->apiKey = variable_get('bunchball_apikey');
     $this->secretKey = variable_get('bunchball_apisecret');

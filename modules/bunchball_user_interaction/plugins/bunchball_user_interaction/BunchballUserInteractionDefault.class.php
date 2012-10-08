@@ -114,11 +114,11 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
 
     foreach ($bunchball_actions as $bunchball_action) {
       if ($values['bunchball_user_interaction'][$bunchball_action . '_check']) {
-        $login_value = array(
+        $value = array(
           'enabled' => 1,
           'method' => $values['bunchball_user_interaction'][$bunchball_action . '_action'],
         );
-        variable_set($bunchball_action, $login_value);
+        variable_set($bunchball_action, $value);
       }
       else {
         variable_set($bunchball_action, array('enabled' => FALSE, 'method' => ''));
@@ -137,38 +137,40 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   public function adminFormAjax($form, &$form_state, $op, $data) {}
 
   /**
-   * Callback for user interactions. Send user data to server for specified operation
+   * Callback for user interactions.
    *
-   * @param $user
-   *    Drupal user object
+   * Send user data to server for specified operation.
    *
-   * @param $op
-   *    Operation to send. EG: login, register
+   * @param object $account
+   *   Drupal user object
+   *
+   * @param string $op
+   *   Operation to send. EG: login, register
    */
-  public function send($user, $op) {
+  public function send($account, $op) {
     switch ($op) {
       case 'login':
-        $this->userLogin($user);
+        $this->userLogin($account);
         break;
 
       case 'register':
-        $this->userRegister($user);
+        $this->userRegister($account);
         break;
 
       case 'profileComplete':
-        $this->userProfileComplete($user);
+        $this->userProfileComplete($account);
         break;
 
       case 'profilePictureAdd':
-        $this->userProfilePictureAdd($user);
+        $this->userProfilePictureAdd($account);
         break;
 
       case 'profilePictureUpdate':
-        $this->userProfilePictureUpdate($user);
+        $this->userProfilePictureUpdate($account);
         break;
 
       case 'profilePictureRemove':
-        $this->userProfilePictureRemove($user);
+        $this->userProfilePictureRemove($account);
         break;
 
     }
@@ -178,25 +180,24 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    * A plugin callback that can take a user object and communicate login to
    * bunchball passing whichever arguments the implementer would like.
    *
-   * @param $user - a valid drupal user object
+   * @param object $account
+   *   Valid drupal user object
    */
-  private function userLogin($user) {
+  private function userLogin($account) {
     if (isset($this->options['bunchball_user_login']['enabled']) && $this->options['bunchball_user_login']['enabled']) {
       try {
-        // Get a create a user and/or get a bunchball session
-        // with the user currently logging in
-        $this->apiUserLogin($user);
+        $this->apiUserLogin($account);
 
         $identity_provider = 'Drupal';
         // We call logAction with 'Login' as the 'actionTag'. In addition to the
         // 'actionTag' word we can pass additional tagging information as a comma
         // seperated list of Key/Value pairs (e.g. "Login, Identity Provider: Drupal").
         // If we've got the Janrain module (rpx) we can extract providerName from
-        // $user->data and pass that along.
+        // $account->data and pass that along.
 
         if (module_exists('rpx_core')){
-          if(isset($user->data['rpx_data']['profile']['providerName'])) {
-            $identity_provider = $user->data['rpx_data']['profile']['providerName'];
+          if(isset($account->data['rpx_data']['profile']['providerName'])) {
+            $identity_provider = $account->data['rpx_data']['profile']['providerName'];
           }
         }
         $action = $this->options['bunchball_user_login']['method'];
@@ -212,20 +213,19 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   }
 
   /**
-   * A plugin callback that can take a user object and communicate regsitration to
-   * bunchball passing whichever arguments the implementer would like.
+   * A plugin callback that can take a user object and communicate regsitration
+   * to bunchball.
    *
-   * @param $user - a valid drupal user object
+   * @param object $account
+   *   Valid drupal user object
    */
-  private function userRegister($user) {
+  private function userRegister($account) {
     if (isset($this->options['bunchball_user_register']['enabled']) && $this->options['bunchball_user_register']['enabled']) {
       try {
-        // Get a create a user and/or get a bunchball session
-        // with the user currently logging in
-        $this->apiUserLogin($user);
+        $this->apiUserLogin($account);
         $action = $this->options['bunchball_user_register']['method'];
         $this->bunchballApi->logAction($action);
-        $this->userProfileComplete($user);
+        $this->userProfileComplete($account);
       }
       catch (NitroAPI_LogActionException $e) {
         drupal_set_message($e->getMessage(), 'error');
@@ -235,22 +235,20 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
 
   /**
    * A plugin callback that can take a user object and communicate information
-   * about the number of profile fields that have been completed to bunchball
-   * passing whichever additional arguments the implementer would like.
+   * about the number of profile fields that have been completed to bunchball.
    *
-   * @param $user - a valid drupal user object
+   * @param object $account
+   *   Valid drupal user object
    */
-  private function userProfileComplete($user) {
+  private function userProfileComplete($account) {
     if ($this->options['bunchball_user_profile_complete']['enabled']) {
       try {
         $count = 0;
-        //We call the bunchball login action so that the logAction is associated
-        //with the user currently logging in
-        $this->apiUserLogin($user);
+        $this->apiUserLogin($account);
 
         $custom_user_fields = field_info_instances('user', 'user');
         foreach($custom_user_fields as $field => $value) {
-          if (isset($user->{$field}[LANGUAGE_NONE][0])) {
+          if (isset($account->{$field}[LANGUAGE_NONE][0])) {
             $count++;
           }
         }
@@ -269,14 +267,14 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    * profile picture has been uploaded to bunchball passing whichever arguments
    * the implementer would like.
    *
-   * @param $user
+   * @param object $account
    *   A valid drupal user object
    */
-  private function userProfilePictureAdd($user) {
+  protected function userProfilePictureAdd($account) {
     if ($this->options['bunchball_user_profile_picture_add']['enabled']) {
       try {
-        $this->apiUserLogin($user);
-        if ($this->isUserPictureUploaded($user) && !$this->isUserPictureAlreadyPresent($user)) {
+        $this->apiUserLogin($account);
+        if ($this->isUserPictureUploaded($account) && !$this->isUserPictureAlreadyPresent($account)) {
           $action = $this->options['bunchball_user_profile_picture_add']['method'];
           $this->bunchballApi->logAction($action);
         }
@@ -290,11 +288,13 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   /**
    * Checks if the user picture is about to be uploaded.
    *
-   * @param $account object
+   * @param object $account
    *   Drupal user account.
+   *
+   * @return Bool
    */
   protected function isUserPictureUploaded($account) {
-    return isset($account->picture_upload) && $account->picture_upload;
+    return !empty($account->picture_upload);
   }
 
   /**
@@ -302,9 +302,11 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    *
    * @param $account object
    *   Drupal user account.
+   *
+   * @return Bool
    */
   protected function isUserPictureAlreadyPresent($account) {
-    return isset($account->picture) && $account->picture;
+    return !empty($account->picture);
   }
 
   /**
@@ -312,9 +314,11 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    *
    * @param $account object
    *   Drupal user account.
+   *
+   * @return Bool
    */
   protected function isUserPictureRemoved($account) {
-    return isset($account->picture_delete) && $account->picture_delete;
+    return !empty($account->picture_delete);
   }
 
   /**
@@ -323,11 +327,11 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
    * @param $account object
    *   Drupal user account.
    */
-  protected function userProfilePictureUpdate($user) {
+  protected function userProfilePictureUpdate($account) {
     if ($this->options['bunchball_user_profile_picture_update']['enabled']) {
       try {
-        $this->apiUserLogin($user);
-        if ($this->isUserPictureUploaded($user) && $this->isUserPictureAlreadyPresent($user)) {
+        $this->apiUserLogin($account);
+        if ($this->isUserPictureUploaded($account) && $this->isUserPictureAlreadyPresent($account)) {
           $action = $this->options['bunchball_user_profile_picture_update']['method'];
           $this->bunchballApi->logAction($action);
         }
@@ -360,15 +364,18 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   }
 
   /**
-   * @param $user - a valid drupal user object
+   * Log in a Drupal user account to bunchball.
+   *
+   * In this default bunchball.login we are making some assumptions about
+   * what bits of information are sent to bunchball to identify a user.
+   * @see nitro.api.class::login()
+   *
+   * @param object $account
+   *   Valid drupal user object
    */
-  private function apiUserLogin($user) {
+  private function apiUserLogin($account) {
     try {
-      //In this default bunchball.login we are making some assumptions about
-      //what bits of information are sent to bunchball to identify a user.
-      //See nitro.api.class::login doxygen for more information if you want to
-      //extend this class to override this method.
-      $this->bunchballApi->drupalLogin($user);
+      $this->bunchballApi->drupalLogin($account);
     }
     catch (NitroAPI_LogActionException $e) {
       drupal_set_message($e->getMessage(), 'error');
