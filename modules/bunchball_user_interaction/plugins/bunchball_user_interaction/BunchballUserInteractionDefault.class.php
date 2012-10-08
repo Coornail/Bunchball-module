@@ -273,8 +273,8 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   protected function userProfilePictureAdd($account) {
     if ($this->options['bunchball_user_profile_picture_add']['enabled']) {
       try {
-        $this->apiUserLogin($account);
         if ($this->isUserPictureUploaded($account) && !$this->isUserPictureAlreadyPresent($account)) {
+          $this->apiUserLogin($account);
           $action = $this->options['bunchball_user_profile_picture_add']['method'];
           $this->bunchballApi->logAction($action);
         }
@@ -330,8 +330,8 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   protected function userProfilePictureUpdate($account) {
     if ($this->options['bunchball_user_profile_picture_update']['enabled']) {
       try {
-        $this->apiUserLogin($account);
         if ($this->isUserPictureUploaded($account) && $this->isUserPictureAlreadyPresent($account)) {
+          $this->apiUserLogin($account);
           $action = $this->options['bunchball_user_profile_picture_update']['method'];
           $this->bunchballApi->logAction($action);
         }
@@ -351,8 +351,8 @@ class BunchballUserInteractionDefault implements BunchballUserInteractionInterfa
   protected function userProfilePictureRemove($account) {
     if ($this->options['bunchball_user_profile_picture_remove']['enabled']) {
       try {
-        $this->apiUserLogin($account);
         if ($this->isUserPictureRemoved($account)) {
+          $this->apiUserLogin($account);
           $action = $this->options['bunchball_user_profile_picture_remove']['method'];
           $this->bunchballApi->logAction($action);
         }
